@@ -1,0 +1,80 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="is.varun.app.popularmovies.MovieDetailActivityFragment"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/movie_title"
+        android:text="@string/movie_title_sample"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:lines="3"
+        android:ellipsize="end"
+        android:background="@color/sec_default"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:textColor="@color/abc_bluegrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:src="@drawable/sample_8"
+            android:scaleType="fitStart"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginLeft="16dp">
+
+            <TextView
+                android:id="@+id/movie_year"
+                android:text="@string/movie_year_sample"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:textSize="@dimen/abc_text_size_medium_material"/>
+            <TextView
+                android:id="@+id/movie_runtime"
+                android:text="@string/movie_runtime_sample"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textSize="@dimen/abc_text_size_medium_material"/>
+            <TextView
+                android:id="@+id/movie_rating"
+                android:text="@string/movie_rating_sample"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/sec_default"
+                android:textSize="@dimen/abc_text_size_display_2_material"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/movie_desc"
+        android:text="@string/movie_desc_sample"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="16dp"
+        android:layout_weight="1"
+        android:textSize="@dimen/abc_text_size_subhead_material"/>
+
+</LinearLayout>
