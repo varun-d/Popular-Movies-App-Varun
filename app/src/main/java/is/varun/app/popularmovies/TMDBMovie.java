@@ -16,7 +16,7 @@ public class TMDBMovie {
     private String movieTitle;          // '(Untitled)'
     private String movieOverview;       // 'Awaiting movie description'
     private String movieReleaseDate;    // '25th June 2015'
-    private String moviePosterURL;      // http://image.tmdb.org/t/p/w185/uXZYawqUsChGSj54wcuBtEdUJbh.jpg
+    private String moviePosterURI;      // /uXZYawqUsChGSj54wcuBtEdUJbh.jpg
     private String movieVote;           // '0.0' String.format("%.5g%n", 0.912385);
     private String moviePop;            // '00.00/100'
 
@@ -171,27 +171,27 @@ public class TMDBMovie {
     }
 
     /**
-     * Set the Movie Poster URL in format of http://image.tmdb.org/t/p/w185/uXZYawqUsChGSj54wcuBtEdUJbh.jpg
+     * Set the Movie Poster URL in format of /uXZYawqUsChGSj54wcuBtEdUJbh.jpg
      *
      * @param  posterURI   String should look like "/uXZYawqUsChGSj54wcuBtEdUJbh.jpg"
      */
-    public void setMoviePosterURL (String size, String posterURI)
+    public void setMoviePosterURI (String posterURI)
     {
         if ( posterURI == null ) {
-            moviePosterURL = "https://placeholdit.imgix.net/~text?txtsize=17&txt=poster%20placeholder&w=185&h=278";
+            moviePosterURI = "https://placeholdit.imgix.net/~text?txtsize=17&txt=poster%20placeholder&w=185&h=278";
         } else {
-            moviePosterURL = "http://image.tmdb.org/t/p/" + size + posterURI;
+            moviePosterURI = posterURI;
         }
     }
 
     /**
-     * Get the Movie Poster URL in format of http://image.tmdb.org/t/p/w185/uXZYawqUsChGSj54wcuBtEdUJbh.jpg
+     * Get the Movie Poster URL in format of /uXZYawqUsChGSj54wcuBtEdUJbh.jpg
      *
-     * @return the movie poster URL
+     * @return the movie poster URL moviePosterURI
      */
-    public String getMoviePosterURL ()
+    public String setMoviePosterURI ()
     {
-        return moviePosterURL;
+        return moviePosterURI;
     }
 
     /**
@@ -200,12 +200,11 @@ public class TMDBMovie {
     public void debugMovieInfo ()
     {
         Log.v(LOG_TAG, movieTitle);
-        Log.v(LOG_TAG, movieTitle);
         Log.v(LOG_TAG, movieID);
         Log.v(LOG_TAG, movieOverview);
         Log.v(LOG_TAG, movieVote);
         Log.v(LOG_TAG, movieReleaseDate);
-        Log.v(LOG_TAG, moviePosterURL);
+        Log.v(LOG_TAG, moviePosterURI);
         Log.v(LOG_TAG, moviePop);
     }
 }

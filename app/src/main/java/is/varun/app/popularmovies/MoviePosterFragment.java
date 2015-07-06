@@ -38,7 +38,7 @@ import java.net.URL;
 public class MoviePosterFragment extends Fragment {
 
     public final static String EXTRA_MESSAGE = "is.varun.app.popularmovies.MESSAGE";
-    private final static String LOG_TAG = "MoviePosterFragment Class";
+    private final static String LOG_TAG = "MoviePosterFragment";
 
     public MoviePosterFragment() {
     }
@@ -152,13 +152,7 @@ public class MoviePosterFragment extends Fragment {
 
     private class FetchMovieTask extends AsyncTask<String, Integer, TMDBMovie[]> {
 
-        // TODO: Get shared preferences
-        //SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-/*      TODO: Finish working on getMoviesfromJSON
         private TMDBMovie[] getMoviesDataFromJson(String moviesJsonStr) throws JSONException {
-
-            TMDBMovie[] myMovies = null;
 
             // These are the names of the JSON objects that need to be extracted.
             final String TAG_RESULTS = "results";
@@ -170,58 +164,31 @@ public class MoviePosterFragment extends Fragment {
             final String TAG_VOTE = "vote_average";
             final String TAG_POP = "popularity";
 
-            JSONObject moviesJson = new JSONObject(moviesJsonStr);
-            JSONArray resultsArray = moviesJson.getJSONArray(TAG_RESULTS);
+            JSONObject moviesJsonObj = new JSONObject(moviesJsonStr);
+            JSONArray movieResultsArray = moviesJsonObj.getJSONArray(TAG_RESULTS);
 
-            // TODO: Translate JSON array into TMDBMovie object
+            TMDBMovie[] myMovies = new TMDBMovie[movieResultsArray.length()];
 
-            Time dayTime = new Time();
-            dayTime.setToNow();
+            for (int i = 0; i < movieResultsArray.length(); i++) {
 
-            // we start at the day returned by local time. Otherwise this is a mess.
-            int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
+                // Get the JSON object representing the movie at position i
+                JSONObject thisMovie = movieResultsArray.getJSONObject(i);
 
-            // now we work exclusively in UTC
-            dayTime = new Time();
+                // Create a new movie in the myMovies Object Array with the constructor value of ID
+                myMovies[i] = new TMDBMovie(thisMovie.getString(TAG_ID));
 
-            String[] resultStrs = new String[numDays];
-            for (int i = 0; i < weatherArray.length(); i++) {
-                // For now, using the format "Day, description, hi/low"
-                String day;
-                String description;
-                String highAndLow;
-
-                // Get the JSON object representing the day
-                JSONObject dayForecast = weatherArray.getJSONObject(i);
-
-                // The date/time is returned as a long.  We need to convert that
-                // into something human-readable, since most people won't read "1400356800" as
-                // "this saturday".
-                long dateTime;
-                // Cheating to convert this to UTC time, which is what we want anyhow
-                dateTime = dayTime.setJulianDay(julianStartDay + i);
-                day = getReadableDateString(dateTime);
-
-                // description is in a child array called "weather", which is 1 element long.
-                JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
-                description = weatherObject.getString(OWM_DESCRIPTION);
-
-                // Temperatures are in a child object called "temp".  Try not to name variables
-                // "temp" when working with temperature.  It confuses everybody.
-                JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
-                double high = temperatureObject.getDouble(OWM_MAX);
-                double low = temperatureObject.getDouble(OWM_MIN);
-
-                highAndLow = formatHighLows(high, low);
-                resultStrs[i] = day + " - " + description + " - " + highAndLow;
+                // Set rest of the values through it's setter methods
+                myMovies[i].setMovieTitle(thisMovie.getString(TAG_TITLE));
+                myMovies[i].setMovieOverview(thisMovie.getString(TAG_OVERVIEW));
+                myMovies[i].setMovieReleaseDate(thisMovie.getString(TAG_RELDATE));
+                myMovies[i].setMovieVote(thisMovie.getString(TAG_VOTE));
+                myMovies[i].setMoviePop(thisMovie.getString(TAG_POP));
+                myMovies[i].setMoviePosterURI(thisMovie.getString(TAG_POSTER_URI));
             }
 
-            for (String s : resultStrs) {
-            }
-            return resultStrs;
-
+            return myMovies;
         }
-*/
+
         protected TMDBMovie[] doInBackground(String... sParams) {
             // Get preferences from SharedPreferences summary
             // String sortSetting = sharedPref.getString("sortby", "");
@@ -286,21 +253,19 @@ public class MoviePosterFragment extends Fragment {
                 // Log rawMoviesJsonStr to check if we have received any reply
                 Log.v(LOG_TAG, rawMoviesJsonStr);
 
-                return myMovies;
-                /*
+                //return myMovies;
+
                 try {
                     // Use the helper function to turn JSON into Movies object using our TMDBMovie class
-                    //return getMoviesObjFromJson(rawMoviesJsonStr);
-                    return rawMoviesJsonStr;
+                    return getMoviesDataFromJson(rawMoviesJsonStr);
+
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
                     e.printStackTrace();
-                } */
+                }
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error running doInBackground.", e);
-                // If the code didn't successfully get the movie data, there's no point in attempting to parse
-                rawMoviesJsonStr = null;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -313,21 +278,28 @@ public class MoviePosterFragment extends Fragment {
                     }
                 }
             }
-
             return null;
         }
-/*
-        // Method to send data to Array Adapter after doInBackground finishes.
-        protected void onPostExecute(TMDBMovie[] movieResults) {
+
+        // Method to do some work as doInBackground finishes
+        // TODO: onPostExec will get two items...
+
+        protected void onPostExecute(TMDBMovie[] movieArray) {
+            for (int i = 0; i < movieArray.length; i++){
+                Log.v(LOG_TAG,movieArray[0].getMovieID());
+            }
+
+
+            /* Do something here if movieResults is not null
             if (movieResults != null) {
                 mForecastAdapter.clear();
+
                 for (String datForecastStr : movieResults) {
                     mForecastAdapter.add(datForecastStr);
                 }
-            }
-
+            }*/
         }
-*/
+
     }
 }
 
