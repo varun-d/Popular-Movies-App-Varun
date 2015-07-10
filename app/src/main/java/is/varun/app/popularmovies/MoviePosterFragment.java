@@ -3,6 +3,7 @@ package is.varun.app.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -19,6 +20,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +32,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 /**
@@ -39,6 +44,8 @@ public class MoviePosterFragment extends Fragment {
 
     public final static String EXTRA_MESSAGE = "is.varun.app.popularmovies.MESSAGE";
     private final static String LOG_TAG = "MoviePosterFragment";
+
+    public MovieAdapter mImageAdapter;
 
     public MoviePosterFragment() {
     }
@@ -54,8 +61,10 @@ public class MoviePosterFragment extends Fragment {
         // Assign poster_gv with the poster_gridview by finding it within the rootView
         GridView poster_gv = (GridView) rootView.findViewById(R.id.poster_gridview);
 
+        mImageAdapter = new MovieAdapter(thisContext);
+
         // Set an Adapter on the poster_gv. This adapter is an ImageAdapted extended from the BaseAdapter class
-        poster_gv.setAdapter( new ImageAdapter(thisContext) );
+        poster_gv.setAdapter(mImageAdapter);
 
         FetchMovieTask getMoviesNow = new FetchMovieTask();
         getMoviesNow.execute();
@@ -82,71 +91,110 @@ public class MoviePosterFragment extends Fragment {
         return rootView;
     }
 
-    public class ImageAdapter extends BaseAdapter {
+
+    public class MovieAdapter extends BaseAdapter {
+
+        // Keeping this for historic reasons. Unused
+        private Integer[] mThumbIds = {
+                R.drawable.sample_8,
+                R.drawable.sample_7,
+                R.drawable.sample_6,
+                R.drawable.sample_5,
+                R.drawable.sample_4
+        };
+
+        // Create a new myMoviesList list of object type TMDBMovie
+        ArrayList<TMDBMovie> myMoviesList;
 
         // Create a private member Context variable mContext
         private Context mContext;
 
-        // Init the ImageAdapter with the private Context mContext
-        public ImageAdapter (Context c) {
+        /** MovieAdapter constructor
+         * Initialize the myMoviesList ArrayList that will contain the movie data
+         * assign mContext
+         */
+        public MovieAdapter (Context c) {
             mContext = c;
+            myMoviesList = new ArrayList<>();
+
+            // Populate the myMoviesList with one default placeholder
+            Resources res = c.getResources();
+
+            // Create a sample movie object
+            TMDBMovie sample = new TMDBMovie(res.getString(R.string.movie_id_sample));
+            sample.setMovieTitle(res.getString(R.string.movie_title_sample));
+            sample.setMovieOverview(res.getString(R.string.movie_overview_sample));
+            sample.setMovieVote(res.getString(R.string.movie_vote_sample));
+            sample.setMovieReleaseDate(res.getString(R.string.movie_rel_sample));
+            sample.setMoviePop(res.getString(R.string.movie_pop_sample));
+            sample.setMoviePosterURI(res.getString(R.string.movie_posterURL_sample));
+
+            // Insert the sample movie object into the myMoviesList
+            myMoviesList.add(sample);
         }
 
-        // The Adapter class has to overide getCount
+        // getCount gets the size of myMoviesList
         @Override
         public int getCount() {
-            return mThumbIds.length;
+            return myMoviesList.size();
         }
 
-        // The Adapter class has to overide getItem
+        // getItem gets the item at position (int) from myMoviesList
         @Override
         public Object getItem(int position){
-            return null;
+            return myMoviesList.get(position);
         }
 
-        // the Adapter class has to overide getItemId
+        // getItemId gets the item id at the position. Uses the getID() function of our custom TMDB object :)
         @Override
         public long getItemId(int position){
-            return 0;
+            return myMoviesList.get(position).getMovieID();
+        }
+
+        // A custom Add function to add Movies to the myMoviesList
+        public void addMovies (TMDBMovie[] movies) {
+            Collections.addAll(myMoviesList,movies);
+            this.notifyDataSetChanged();
         }
 
         public View getView(int position, View convertView, ViewGroup parent){
-            // Create an undeclared variable ImageView
+            // TODO: Fix how we are displaying the image. Either create this view in XML or fix it here
+
+            // Declare an ImageView
             ImageView imageView;
 
+            // If not recycled there then initialize the new imageView with attributes
             if (convertView == null) {
-                // if it's not recycled, initialize some attributes
-                // Create a new ImageView object with the current context passed on as variable
+
+                // Create a new ImageView for the current context
                 imageView = new ImageView(mContext);
-                //setLayoutParams sets the width and height of the image so each image is resized and cropped to fit in these dimensions, as appropriate.
+
+                // Set this to true if you want the ImageView to adjust its bounds to preserve the aspect ratio of its drawable.
                 imageView.setAdjustViewBounds(true);
-                //setScaleType to center crop w00t
+
+                //Scale the image uniformly (and can bleed out) while preserving aspect ratio
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                //setPadding on all sides. TODO: Fix image issues later
-                imageView.setPadding(0,0,0,0);
+
+                //setPadding only on Right and Bottom
+                imageView.setPadding(0,1,1,0);
+
             } else {
+
+                // Else recycle the view from convertView
                 imageView = (ImageView) convertView;
             }
 
-            // TODO: Understand what this does
-            imageView.setImageResource(mThumbIds[position]);
+            // This commnet is for testing: imageView.setImageResource(mThumbIds[position]);
+
+            // Load image URL from the myMoviesList corresponding to the current position of the view
+            Glide.with(mContext).load(myMoviesList.get(position).getMoviePosterURL())
+                    .centerCrop()
+                    .override(185, 278)
+                   .into(imageView);
+
+
             return imageView;
         }
-
-        // references to sample images
-        private Integer[] mThumbIds = {
-                R.drawable.sample_8, R.drawable.sample_3,
-                R.drawable.sample_4, R.drawable.sample_5,
-                R.drawable.sample_6, R.drawable.sample_7,
-                R.drawable.sample_0, R.drawable.sample_1,
-                R.drawable.sample_2, R.drawable.sample_8,
-                R.drawable.sample_4, R.drawable.sample_5,
-                R.drawable.sample_6, R.drawable.sample_7,
-                R.drawable.sample_8, R.drawable.sample_1,
-                R.drawable.sample_2, R.drawable.sample_8,
-                R.drawable.sample_4, R.drawable.sample_5,
-                R.drawable.sample_6, R.drawable.sample_7
-        };
 
     }
 
@@ -282,22 +330,16 @@ public class MoviePosterFragment extends Fragment {
         }
 
         // Method to do some work as doInBackground finishes
-        // TODO: onPostExec will get two items...
-
         protected void onPostExecute(TMDBMovie[] movieArray) {
-            for (int i = 0; i < movieArray.length; i++){
-                Log.v(LOG_TAG,movieArray[0].getMovieID());
+            if (movieArray != null) {
+
+                for (TMDBMovie singleMovie : movieArray) {
+                    Log.d(LOG_TAG, String.valueOf(singleMovie.getMovieID()));
+                }
+
+                mImageAdapter.addMovies(movieArray);
             }
 
-
-            /* Do something here if movieResults is not null
-            if (movieResults != null) {
-                mForecastAdapter.clear();
-
-                for (String datForecastStr : movieResults) {
-                    mForecastAdapter.add(datForecastStr);
-                }
-            }*/
         }
 
     }

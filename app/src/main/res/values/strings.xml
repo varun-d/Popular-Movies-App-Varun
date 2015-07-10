@@ -9,9 +9,12 @@
 
     <!-- Movie detail sample strings -->
     <string name="movie_title_sample">Movie Title Goes Here</string>
-    <string name="movie_year_sample">Release: 2015</string>
-    <string name="movie_runtime_sample">Runtime: 120 mins</string>
-    <string name="movie_rating_sample">8 / 10</string>
-    <string name="movie_desc_sample">A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy. Their concept catches on, with underground fight club forming in every town, until an eccentric gets in the way and ignites an out-of-control spiral toward oblivion.</string>
+    <string name="movie_rel_sample">2015-01-01</string>
+    <string name="movie_runtime_sample">91 m</string>
+    <string name="movie_vote_sample">8 / 10</string>
+    <string name="movie_overview_sample">A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy. Their concept catches on, with underground fight club forming in every town, until an eccentric gets in the way and ignites an out-of-control spiral toward oblivion.</string>
+    <string name="movie_posterURL_sample">https://placeholdit.imgix.net/~text?txtsize=17&amp;txt=Loading%20movies&amp;w=185&amp;h=278</string>
+    <string name="movie_id_sample">1234</string>
+    <string name="movie_pop_sample">55.55</string>
 
 </resources>

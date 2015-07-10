@@ -44,7 +44,7 @@
 
             <TextView
                 android:id="@+id/movie_year"
-                android:text="@string/movie_year_sample"
+                android:text="@string/movie_rel_sample"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -58,7 +58,7 @@
                 android:textSize="@dimen/abc_text_size_medium_material"/>
             <TextView
                 android:id="@+id/movie_rating"
-                android:text="@string/movie_rating_sample"
+                android:text="@string/movie_vote_sample"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/sec_default"
@@ -70,7 +70,7 @@
 
     <TextView
         android:id="@+id/movie_desc"
-        android:text="@string/movie_desc_sample"
+        android:text="@string/movie_overview_sample"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginLeft="16dp"

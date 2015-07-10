@@ -43,9 +43,9 @@ public class TMDBMovie {
      * Get MovieID
      * @return  ID of the movie
      */
-    public String getMovieID ()
+    public Long getMovieID ()
     {
-        return movieID;
+        return Long.valueOf(movieID);
     }
 
     /**
@@ -189,9 +189,14 @@ public class TMDBMovie {
      *
      * @return the movie poster URL moviePosterURI
      */
-    public String setMoviePosterURI ()
+    public String getMoviePosterURI ()
     {
         return moviePosterURI;
+    }
+
+    public String getMoviePosterURL ()
+    {
+        return "http://image.tmdb.org/t/p/w185" + moviePosterURI;
     }
 
     /**
