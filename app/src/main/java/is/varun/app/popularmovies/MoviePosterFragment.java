@@ -34,18 +34,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 
 /**
- * A placeholder fragment containing a simple view.
+ * MoviePosterFragment
+ * This fragment fetches all movie data from the interwebs and displays the movie posters
+ * in a GridView using Glide. The fetching and creaton of TMDBMovie object is done in
+ * doInBackground. Addition is done on onPostExecute
  */
 
 public class MoviePosterFragment extends Fragment {
 
     public final static String EXTRA_MESSAGE = "is.varun.app.popularmovies.MESSAGE";
+    public final static String SER_KEY = "is.varun.app.popularmovies.SER_KEY";
     private final static String LOG_TAG = "MoviePosterFragment";
 
-    public MovieAdapter mImageAdapter;
+    public MovieAdapter mMovieAdapter;
 
     public MoviePosterFragment() {
     }
@@ -53,6 +58,7 @@ public class MoviePosterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        // I really need to understand what the fuck is this context thing
         final Context thisContext = getActivity().getApplicationContext();
 
         // Assign View rootView the inflated fragment_main xml template
@@ -61,26 +67,39 @@ public class MoviePosterFragment extends Fragment {
         // Assign poster_gv with the poster_gridview by finding it within the rootView
         GridView poster_gv = (GridView) rootView.findViewById(R.id.poster_gridview);
 
-        mImageAdapter = new MovieAdapter(thisContext);
+        // Initialise the mMovieAdapter with the newMovieAdapter
+        mMovieAdapter = new MovieAdapter(thisContext);
 
         // Set an Adapter on the poster_gv. This adapter is an ImageAdapted extended from the BaseAdapter class
-        poster_gv.setAdapter(mImageAdapter);
+        poster_gv.setAdapter(mMovieAdapter);
 
+        // getMoviesNow AsyncTast to fetch all movies
         FetchMovieTask getMoviesNow = new FetchMovieTask();
         getMoviesNow.execute();
 
-        // On click to open Toast for now. TODO: Open MovieDetailActivity in the future through intent
+        // On click to open Toast for now.
         poster_gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                String constrMesssage = "Tes test test test test You are looking at the message from PosterPage. Clicked on element " + position;
 
-                Toast.makeText(thisContext, "" + constrMesssage, Toast.LENGTH_SHORT).show();
+                // Get the TMDBMovie object for the item that was clicked
+                TMDBMovie clickedMovie = mMovieAdapter.getItem(position);
 
                 // Create a new Intent object with current activity context and detailActivity as the class
                 Intent movieDetailActivityintent = new Intent(getActivity(), MovieDetailActivity.class);
 
-                // putExtra: Add message for the intent activity with Key called EXTRA_MESSAGE defined as static value of current package .MESSAGE
-                movieDetailActivityintent.putExtra(EXTRA_MESSAGE, constrMesssage);
+                // Create a bundle so we can send it off to the other activity/fragment
+                Bundle mBundle = new Bundle();
+
+                // Insert the Object in the mBundle through putSerializable
+                // Remember that for this to work TMDBMovie class has to implement Serializable
+                // and use private static final long serialVersionUID = 1337L;
+                mBundle.putSerializable(SER_KEY,clickedMovie);
+
+                // putExtras, add the mBundle to the new Intent
+                movieDetailActivityintent.putExtras(mBundle);
+
+                // Toast for testing needs. Remove from production
+                // Toast.makeText(thisContext, "TOAST: " + clickedMovie.getMovieTitle(), Toast.LENGTH_SHORT).show();
 
                 // Call method stratActivity with the just created Intent object
                 startActivity(movieDetailActivityintent);
@@ -94,7 +113,7 @@ public class MoviePosterFragment extends Fragment {
 
     public class MovieAdapter extends BaseAdapter {
 
-        // Keeping this for historic reasons. Unused
+        /** Keeping this for historic reasons. Unused
         private Integer[] mThumbIds = {
                 R.drawable.sample_8,
                 R.drawable.sample_7,
@@ -102,8 +121,9 @@ public class MoviePosterFragment extends Fragment {
                 R.drawable.sample_5,
                 R.drawable.sample_4
         };
+         */
 
-        // Create a new myMoviesList list of object type TMDBMovie
+        // Declare a new myMoviesList list of object type TMDBMovie
         ArrayList<TMDBMovie> myMoviesList;
 
         // Create a private member Context variable mContext
@@ -120,17 +140,17 @@ public class MoviePosterFragment extends Fragment {
             // Populate the myMoviesList with one default placeholder
             Resources res = c.getResources();
 
-            // Create a sample movie object
+            /** Create a sample movie object. Keeping for future tests
             TMDBMovie sample = new TMDBMovie(res.getString(R.string.movie_id_sample));
             sample.setMovieTitle(res.getString(R.string.movie_title_sample));
             sample.setMovieOverview(res.getString(R.string.movie_overview_sample));
             sample.setMovieVote(res.getString(R.string.movie_vote_sample));
             sample.setMovieReleaseDate(res.getString(R.string.movie_rel_sample));
             sample.setMoviePop(res.getString(R.string.movie_pop_sample));
-            sample.setMoviePosterURI(res.getString(R.string.movie_posterURL_sample));
+            //sample.setMoviePosterURI(res.getString(R.string.movie_posterURL_sample));
 
             // Insert the sample movie object into the myMoviesList
-            myMoviesList.add(sample);
+            myMoviesList.add(sample); */
         }
 
         // getCount gets the size of myMoviesList
@@ -141,7 +161,7 @@ public class MoviePosterFragment extends Fragment {
 
         // getItem gets the item at position (int) from myMoviesList
         @Override
-        public Object getItem(int position){
+        public TMDBMovie getItem(int position){
             return myMoviesList.get(position);
         }
 
@@ -151,9 +171,9 @@ public class MoviePosterFragment extends Fragment {
             return myMoviesList.get(position).getMovieID();
         }
 
-        // A custom Add function to add Movies to the myMoviesList
+        // A custom Add function to add Movies to the myMoviesList. This method also notifies of data changes!
         public void addMovies (TMDBMovie[] movies) {
-            Collections.addAll(myMoviesList,movies);
+            Collections.addAll(myMoviesList, movies);
             this.notifyDataSetChanged();
         }
 
@@ -184,13 +204,15 @@ public class MoviePosterFragment extends Fragment {
                 imageView = (ImageView) convertView;
             }
 
-            // This commnet is for testing: imageView.setImageResource(mThumbIds[position]);
+            // This comment is for testing: imageView.setImageResource(mThumbIds[position]);
 
             // Load image URL from the myMoviesList corresponding to the current position of the view
             Glide.with(mContext).load(myMoviesList.get(position).getMoviePosterURL())
                     .centerCrop()
                     .override(185, 278)
-                   .into(imageView);
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.error_holder)
+                    .into(imageView);
 
 
             return imageView;
@@ -212,11 +234,16 @@ public class MoviePosterFragment extends Fragment {
             final String TAG_VOTE = "vote_average";
             final String TAG_POP = "popularity";
 
+            // Declare and init a new JSONObject through the moviesJsonStr we just received
             JSONObject moviesJsonObj = new JSONObject(moviesJsonStr);
+
+            // getJSONArray within "results" as per July 10 2015 TMDB API
             JSONArray movieResultsArray = moviesJsonObj.getJSONArray(TAG_RESULTS);
 
+            // Declare and init a new TMDBMovie object the length of our "result" array
             TMDBMovie[] myMovies = new TMDBMovie[movieResultsArray.length()];
 
+            // Run through the results array
             for (int i = 0; i < movieResultsArray.length(); i++) {
 
                 // Get the JSON object representing the movie at position i
@@ -225,7 +252,7 @@ public class MoviePosterFragment extends Fragment {
                 // Create a new movie in the myMovies Object Array with the constructor value of ID
                 myMovies[i] = new TMDBMovie(thisMovie.getString(TAG_ID));
 
-                // Set rest of the values through it's setter methods
+                // Set rest of the values through it's setter methods. This may need to be updated later
                 myMovies[i].setMovieTitle(thisMovie.getString(TAG_TITLE));
                 myMovies[i].setMovieOverview(thisMovie.getString(TAG_OVERVIEW));
                 myMovies[i].setMovieReleaseDate(thisMovie.getString(TAG_RELDATE));
@@ -238,22 +265,20 @@ public class MoviePosterFragment extends Fragment {
         }
 
         protected TMDBMovie[] doInBackground(String... sParams) {
+            // TODO: In case JSON is null
             // Get preferences from SharedPreferences summary
             // String sortSetting = sharedPref.getString("sortby", "");
 
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
+            // urlConnection and reader declared outside the try/catch so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String rawMoviesJsonStr = null;
+            String rawMoviesJsonStr;
 
-            // This is where we define our array of myMovies of class Movie
-            TMDBMovie[] myMovies = null;
 
             try {
-                // Create a new URL builder called builder
+                // Create a new URL builder called builder. Duh!
                 Uri.Builder builder = new Uri.Builder();
 
                 // Let the builder build the URL in the format of http://api.themoviedb.org/3/movie/popular?api_key=bb2676cea1c31da46a38029b13b86eaf
@@ -299,9 +324,7 @@ public class MoviePosterFragment extends Fragment {
                 rawMoviesJsonStr = buffer.toString();
 
                 // Log rawMoviesJsonStr to check if we have received any reply
-                Log.v(LOG_TAG, rawMoviesJsonStr);
-
-                //return myMovies;
+                Log.d(LOG_TAG, rawMoviesJsonStr);
 
                 try {
                     // Use the helper function to turn JSON into Movies object using our TMDBMovie class
@@ -333,11 +356,12 @@ public class MoviePosterFragment extends Fragment {
         protected void onPostExecute(TMDBMovie[] movieArray) {
             if (movieArray != null) {
 
-                for (TMDBMovie singleMovie : movieArray) {
-                    Log.d(LOG_TAG, String.valueOf(singleMovie.getMovieID()));
-                }
+                // Log the size of the received array to confirm number of movies
+                Log.d(LOG_TAG, String.valueOf(movieArray.length));
 
-                mImageAdapter.addMovies(movieArray);
+                // Call the addMovies function to send over our array of TMDBMovie list to the Adapter
+                // Remember that the addMovies will also call this.notifyDataSetChanged()
+                mMovieAdapter.addMovies(movieArray);
             }
 
         }

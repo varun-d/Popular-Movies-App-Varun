@@ -2,6 +2,8 @@ package is.varun.app.popularmovies;
 
 import android.util.Log;
 
+import java.io.Serializable;
+
 /**
  * A class to store movies
  *
@@ -9,7 +11,9 @@ import android.util.Log;
  * @version 1.0
  *
  */
-public class TMDBMovie {
+public class TMDBMovie implements Serializable {
+
+    private static final long serialVersionUID = 1337L;
 
     private String LOG_TAG = "TMDBMovie ClassLog";
     private String movieID;             // '0000' REQUIRED
@@ -198,6 +202,7 @@ public class TMDBMovie {
     {
         return "http://image.tmdb.org/t/p/w185" + moviePosterURI;
     }
+
 
     /**
      * Debug function. Verbose Log all captured data for a given movie
