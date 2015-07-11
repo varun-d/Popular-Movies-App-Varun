@@ -286,9 +286,10 @@ public class MoviePosterFragment extends Fragment {
                 builder.scheme("http")
                         .authority("api.themoviedb.org")
                         .appendPath("3")
+                        .appendPath("discover")
                         .appendPath("movie")
-                        .appendPath("popular")
-                        .appendQueryParameter("api_key", "bb2676cea1c31da46a38029b13b86eaf");
+                        .appendQueryParameter("api_key", "bb2676cea1c31da46a38029b13b86eaf")
+                        .appendQueryParameter("sort_by", "popularity.desc");
 
                 // Build the URL, toString it and send it over to 'url' to be processed
                 String myUrl = builder.build().toString();
