@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.math.BigDecimal;
 
 
 /**
@@ -109,7 +110,13 @@ public class MoviePosterFragment extends Fragment {
 
         return rootView;
     }
+    /* TODO: Get settings and sort by stuff.
+     TODO: Secondly, the default sort order should also be extracted from setings as the user opens the app for the fist time
+    @Override
+    public void onResume(){
 
+    }
+    */
 
     public class MovieAdapter extends BaseAdapter {
 
@@ -171,10 +178,55 @@ public class MoviePosterFragment extends Fragment {
             return myMoviesList.get(position).getMovieID();
         }
 
-        // A custom Add function to add Movies to the myMoviesList. This method also notifies of data changes!
-        public void addMovies (TMDBMovie[] movies) {
-            Collections.addAll(myMoviesList, movies);
+        /** A custom Add function to add Movies to the myMoviesList. This method also notifies of data changes!
+         *
+         * @param newmovies the list of movies to add
+         */
+        public void addMovies (TMDBMovie[] newmovies) {
+
+            // Add all the recently fetched movies to our myMoviesList arraylist
+            Collections.addAll(myMoviesList, newmovies);
+
+            for (TMDBMovie eachMovie : myMoviesList) {
+                Log.d("addMovies SortCheck: ",eachMovie.getMoviePop());
+            }
+
+            // Inform the adapter our data has changed
             this.notifyDataSetChanged();
+        }
+
+        /** A custom sort function to sort Movies in the myMoviesList. This method also notifies of data changes!
+         *
+         * @param sort_by should be either "vote" or "popular"
+         */
+        public void sortMovies (String sort_by) {
+
+            // If equals 1, sort by Popularity
+            if ( sort_by.equals("1") ) {
+                Collections.sort(myMoviesList, new Comparator<TMDBMovie>() {
+                    @Override
+                    public int compare(TMDBMovie m1, TMDBMovie m2) {
+                        BigDecimal bg1, bg2;
+                        bg1 = new BigDecimal(m1.getMoviePop());
+                        bg2 = new BigDecimal(m2.getMoviePop());
+                        return bg1.compareTo(bg2);
+                    }
+                });
+                this.notifyDataSetChanged();
+            }
+            // If equals 0, sort by Vote
+            if (sort_by.equals("0")){
+                Collections.sort(myMoviesList, new Comparator<TMDBMovie>() {
+                    @Override
+                    public int compare(TMDBMovie m1, TMDBMovie m2) {
+                        BigDecimal bg1, bg2;
+                        bg1 = new BigDecimal(m1.getMovieVote());
+                        bg2 = new BigDecimal(m2.getMovieVote());
+                        return bg2.compareTo(bg1);
+                    }
+                });
+                this.notifyDataSetChanged();
+            }
         }
 
         public View getView(int position, View convertView, ViewGroup parent){

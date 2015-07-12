@@ -6,19 +6,22 @@ This public repo is for a practice project under the Udacity's Andoird NanoD pro
 
 ## TODO
 
-1. Change the TMDB endpoint URI from /popular to /discover as per the rube
-2. Create the settings section
-	This would basically fetch the movies again. Ideally, this should be done from within the app so no other calls are made but I want to practice repeat calls
-4. Remove _notes.md file
+1. Create the settings section
+
+> When setting is updated, onResume needs to sort the movies by Vote or Pop and display again hmm.
+> 
+> Could be done through a new BaseAdapter custom function called sortby, which would also internally call this.notifydatachangethingy
+> 
 
 
 # Personal Notes
 
 posterURL append: http://image.tmdb.org/t/p/
-Main URL: http://api.themoviedb.org/3/movie/popular
- But changing this to /discover from July 11nth
+Sample: http://image.tmdb.org/t/p/w185/uXZYawqUsChGSj54wcuBtEdUJbh.jpg
 
-NOTE: Sorting will be done based on pop and vote values obtained from the data
+Main URL: http://api.themoviedb.org/3/discover/movie
+ Changed this to /discover from July 11nth
+ &sort_by=popularity.desc
 
 1. Get popular movies from the above URL
     How many array objects are returned? (20 generally, which works for now)
@@ -39,6 +42,11 @@ Under the main object, **results** has arrays of key value pair movie informatio
 
 4. for each movie in Movies getMoviePosterURL('w185') and send into Glide library to load the images.
 
-## Progress
+## Settings notes
 
-All of the above done. 
+1. Create the settings section
+
+> When setting is updated, onResume needs to sort the movies by Vote or Pop and display again hmm.
+> 
+> Could be done through a new BaseAdapter custom function called sortby, which would also internally call this.notifydatachangethingy
+> 
