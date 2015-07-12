@@ -16,7 +16,7 @@ import org.w3c.dom.Text;
 
 
 /**
- * A placeholder fragment containing a simple view.
+ * Detail activity fragment
  */
 public class MovieDetailActivityFragment extends Fragment {
 
@@ -32,8 +32,7 @@ public class MovieDetailActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         Context mContext = rootView.getContext();
 
-        // Create new String to store getStringExtra from the intent
-        String message = intent.getStringExtra(MoviePosterFragment.EXTRA_MESSAGE);
+        // Create new TMDBMovie object to init with getSerializableExtra from the intent
         TMDBMovie mMovie = (TMDBMovie) intent.getSerializableExtra(MoviePosterFragment.SER_KEY);
 
         // Objectify all views that we need to update
@@ -46,7 +45,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
         // setText to the above intent message (String)
         movieTitleView.setText(mMovie.getMovieTitle());
-        movieRelDateView.setText(mMovie.getMovieReleaseDate().substring(0, Math.min(mMovie.getMovieReleaseDate().length(), 4)));
+        movieRelDateView.setText("Release: " + mMovie.getMovieReleaseDate().substring(0, Math.min(mMovie.getMovieReleaseDate().length(), 4)));
         movieVoteView.setText(mMovie.getMovieVote());
         movieOverviewViewLOL.setText(mMovie.getMovieOverview());
 

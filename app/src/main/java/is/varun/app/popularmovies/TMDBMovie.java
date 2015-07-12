@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * A class to store movies
  *
- * @author Varun Dhanwantri
+ * @author Varun D
  * @version 1.0
  *
  */

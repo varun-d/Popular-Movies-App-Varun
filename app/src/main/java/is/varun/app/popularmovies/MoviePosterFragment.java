@@ -37,55 +37,66 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.math.BigDecimal;
 
-
 /**
  * MoviePosterFragment
  * This fragment fetches all movie data from the interwebs and displays the movie posters
- * in a GridView using Glide. The fetching and creaton of TMDBMovie object is done in
- * doInBackground. Addition is done on onPostExecute
+ * in a GridView using Glide. The fetching and creation of TMDBMovie object is done in
+ * doInBackground.
+ *
+ * Addition of fetched movies is done on onPostExecute
+ *
+ * This project was used to solidify my understanding of the powerful BaseAdapter!
+ * Extending BaseAdapter is the sexiest thing I have learnt!
+ *
+ * @author Varun D
+ * @version 1.0
  */
 
 public class MoviePosterFragment extends Fragment {
 
-    public final static String EXTRA_MESSAGE = "is.varun.app.popularmovies.MESSAGE";
+    // SER_KEY is used to deserialize the Bundle sent onItemClick
     public final static String SER_KEY = "is.varun.app.popularmovies.SER_KEY";
+
+    // LOG_TAG used for logging
     private final static String LOG_TAG = "MoviePosterFragment";
 
+    //Declaring global adapter of custom MovieAdapter object that extends from BaseAdapter
     public MovieAdapter mMovieAdapter;
 
+    // Lonely empty constructor. I could write a whole novel about this guy (or not)
     public MoviePosterFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        // I really need to understand what the fuck is this context thing
+        // I really need to understand what in gods name is this context thing
         final Context thisContext = getActivity().getApplicationContext();
 
-        // Assign View rootView the inflated fragment_main xml template
+        // Declare rootView of View type. Init with inflated fragment_main file
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // Assign poster_gv with the poster_gridview by finding it within the rootView
+        // Declare a new GridView poster_gv and init with poster_gridview view
         GridView poster_gv = (GridView) rootView.findViewById(R.id.poster_gridview);
 
-        // Initialise the mMovieAdapter with the newMovieAdapter
+        // Init the mMovieAdapter with the newMovieAdapter
         mMovieAdapter = new MovieAdapter(thisContext);
 
-        // Set an Adapter on the poster_gv. This adapter is an ImageAdapted extended from the BaseAdapter class
+        // Set the new adapter on the GridView
         poster_gv.setAdapter(mMovieAdapter);
 
         // getMoviesNow AsyncTast to fetch all movies
         FetchMovieTask getMoviesNow = new FetchMovieTask();
         getMoviesNow.execute();
 
-        // On click to open Toast for now.
+        // serOnItemClickListener for our sweet GridView
         poster_gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
                 // Get the TMDBMovie object for the item that was clicked
                 TMDBMovie clickedMovie = mMovieAdapter.getItem(position);
 
-                // Create a new Intent object with current activity context and detailActivity as the class
+                // Create a new Intent object with current activity context and MovieDetailActivity class
                 Intent movieDetailActivityintent = new Intent(getActivity(), MovieDetailActivity.class);
 
                 // Create a bundle so we can send it off to the other activity/fragment
@@ -94,7 +105,7 @@ public class MoviePosterFragment extends Fragment {
                 // Insert the Object in the mBundle through putSerializable
                 // Remember that for this to work TMDBMovie class has to implement Serializable
                 // and use private static final long serialVersionUID = 1337L;
-                mBundle.putSerializable(SER_KEY,clickedMovie);
+                mBundle.putSerializable(SER_KEY, clickedMovie);
 
                 // putExtras, add the mBundle to the new Intent
                 movieDetailActivityintent.putExtras(mBundle);
@@ -107,57 +118,66 @@ public class MoviePosterFragment extends Fragment {
             }
         });
 
-
         return rootView;
     }
-    /* TODO: Get settings and sort by stuff.
-     TODO: Secondly, the default sort order should also be extracted from setings as the user opens the app for the fist time
+
+    /** onResume is specifically for situation when user is returned from the Settings Screen
+     *
+     */
     @Override
-    public void onResume(){
+    public void onResume() {
 
+        // Calling superman as usual
+        super.onResume();
+
+        // Declare SharedPreferences prefs and init with getDefaultSharedPreferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+        // Get sorting preference string which is either 1 or 0
+        String pref_sort_opt = prefs.getString("pref_sort_by", "");
+
+        // Use the adapters sortMovies method to sort our movies accordingly. w00t!
+        mMovieAdapter.sortMovies(pref_sort_opt);
     }
-    */
 
+    // I can taste the sweetness of extending BaseAdapter in my mouth!
+    // Still need to learn about view holders and updating multiple views on getView
     public class MovieAdapter extends BaseAdapter {
 
-        /** Keeping this for historic reasons. Unused
-        private Integer[] mThumbIds = {
-                R.drawable.sample_8,
-                R.drawable.sample_7,
-                R.drawable.sample_6,
-                R.drawable.sample_5,
-                R.drawable.sample_4
-        };
-         */
-
-        // Declare a new myMoviesList list of object type TMDBMovie
+        // Declare a new myMoviesList ArrayList of object type TMDBMovie
         ArrayList<TMDBMovie> myMoviesList;
 
-        // Create a private member Context variable mContext
+        // Declare a Context private member variable mContext. Not init'ed with any value
         private Context mContext;
 
-        /** MovieAdapter constructor
+        /**
+         * MovieAdapter constructor
          * Initialize the myMoviesList ArrayList that will contain the movie data
          * assign mContext
          */
-        public MovieAdapter (Context c) {
+        public MovieAdapter(Context c) {
+
+            // Init mContext by consuming c
             mContext = c;
+
+            // Init myMoviesList new ArrayList within the constructor. Empty.
             myMoviesList = new ArrayList<>();
 
-            // Populate the myMoviesList with one default placeholder
+            /* Initial idea was to populate the empty arraylist with a sample movie.
+            // Not for production
             Resources res = c.getResources();
 
-            /** Create a sample movie object. Keeping for future tests
-            TMDBMovie sample = new TMDBMovie(res.getString(R.string.movie_id_sample));
-            sample.setMovieTitle(res.getString(R.string.movie_title_sample));
-            sample.setMovieOverview(res.getString(R.string.movie_overview_sample));
-            sample.setMovieVote(res.getString(R.string.movie_vote_sample));
-            sample.setMovieReleaseDate(res.getString(R.string.movie_rel_sample));
-            sample.setMoviePop(res.getString(R.string.movie_pop_sample));
-            //sample.setMoviePosterURI(res.getString(R.string.movie_posterURL_sample));
+            // Create a sample movie object. Keeping for future tests
+             TMDBMovie sample = new TMDBMovie(res.getString(R.string.movie_id_sample));
+             sample.setMovieTitle(res.getString(R.string.movie_title_sample));
+             sample.setMovieOverview(res.getString(R.string.movie_overview_sample));
+             sample.setMovieVote(res.getString(R.string.movie_vote_sample));
+             sample.setMovieReleaseDate(res.getString(R.string.movie_rel_sample));
+             sample.setMoviePop(res.getString(R.string.movie_pop_sample));
+             //sample.setMoviePosterURI(res.getString(R.string.movie_posterURL_sample));
 
-            // Insert the sample movie object into the myMoviesList
-            myMoviesList.add(sample); */
+             // Insert the sample movie object into the myMoviesList
+             myMoviesList.add(sample); */
         }
 
         // getCount gets the size of myMoviesList
@@ -168,54 +188,57 @@ public class MoviePosterFragment extends Fragment {
 
         // getItem gets the item at position (int) from myMoviesList
         @Override
-        public TMDBMovie getItem(int position){
+        public TMDBMovie getItem(int position) {
             return myMoviesList.get(position);
         }
 
         // getItemId gets the item id at the position. Uses the getID() function of our custom TMDB object :)
         @Override
-        public long getItemId(int position){
+        public long getItemId(int position) {
             return myMoviesList.get(position).getMovieID();
         }
 
-        /** A custom Add function to add Movies to the myMoviesList. This method also notifies of data changes!
+        /**
+         * A custom Add function to add Movies to the myMoviesList. This method also notifies of data changes!
          *
          * @param newmovies the list of movies to add
          */
-        public void addMovies (TMDBMovie[] newmovies) {
+        public void addMovies(TMDBMovie[] newmovies) {
 
             // Add all the recently fetched movies to our myMoviesList arraylist
             Collections.addAll(myMoviesList, newmovies);
 
-            for (TMDBMovie eachMovie : myMoviesList) {
-                Log.d("addMovies SortCheck: ",eachMovie.getMoviePop());
-            }
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            String pref_sort_opt = prefs.getString("pref_sort_by", "");
+            this.sortMovies(pref_sort_opt);
 
             // Inform the adapter our data has changed
             this.notifyDataSetChanged();
         }
 
-        /** A custom sort function to sort Movies in the myMoviesList. This method also notifies of data changes!
+        /**
+         * A custom sort function to sort Movies in the myMoviesList.
+         * This method also notifies of data changes
          *
-         * @param sort_by should be either "vote" or "popular"
+         * @param sort_by should be either "1" for popular or "0" for vote
          */
-        public void sortMovies (String sort_by) {
+        public void sortMovies(String sort_by) {
 
             // If equals 1, sort by Popularity
-            if ( sort_by.equals("1") ) {
+            if (sort_by.equals("1")) {
                 Collections.sort(myMoviesList, new Comparator<TMDBMovie>() {
                     @Override
                     public int compare(TMDBMovie m1, TMDBMovie m2) {
                         BigDecimal bg1, bg2;
                         bg1 = new BigDecimal(m1.getMoviePop());
                         bg2 = new BigDecimal(m2.getMoviePop());
-                        return bg1.compareTo(bg2);
+                        return bg2.compareTo(bg1);
                     }
                 });
                 this.notifyDataSetChanged();
             }
             // If equals 0, sort by Vote
-            if (sort_by.equals("0")){
+            if (sort_by.equals("0")) {
                 Collections.sort(myMoviesList, new Comparator<TMDBMovie>() {
                     @Override
                     public int compare(TMDBMovie m1, TMDBMovie m2) {
@@ -229,16 +252,17 @@ public class MoviePosterFragment extends Fragment {
             }
         }
 
-        public View getView(int position, View convertView, ViewGroup parent){
-            // TODO: Fix how we are displaying the image. Either create this view in XML or fix it here
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Not an ideal way to show poster images
+            // Could possibly use an xml layout file with one ImageView. Oh well...
 
-            // Declare an ImageView
+            // Declare an ImageView... sigh...
             ImageView imageView;
 
             // If not recycled there then initialize the new imageView with attributes
             if (convertView == null) {
 
-                // Create a new ImageView for the current context
+                // Create a new ImageView within the current context? What the hell is this context
                 imageView = new ImageView(mContext);
 
                 // Set this to true if you want the ImageView to adjust its bounds to preserve the aspect ratio of its drawable.
@@ -248,15 +272,15 @@ public class MoviePosterFragment extends Fragment {
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
                 //setPadding only on Right and Bottom
-                imageView.setPadding(0,1,1,0);
+                imageView.setPadding(0, 1, 1, 0);
 
             } else {
 
-                // Else recycle the view from convertView
+                // Else recycle the view from convertView. Go green!
                 imageView = (ImageView) convertView;
             }
 
-            // This comment is for testing: imageView.setImageResource(mThumbIds[position]);
+            // This is for testing: imageView.setImageResource(mThumbIds[position]);
 
             // Load image URL from the myMoviesList corresponding to the current position of the view
             Glide.with(mContext).load(myMoviesList.get(position).getMoviePosterURL())
@@ -265,7 +289,6 @@ public class MoviePosterFragment extends Fragment {
                     .placeholder(R.drawable.placeholder)
                     .error(R.drawable.error_holder)
                     .into(imageView);
-
 
             return imageView;
         }
@@ -317,9 +340,6 @@ public class MoviePosterFragment extends Fragment {
         }
 
         protected TMDBMovie[] doInBackground(String... sParams) {
-            // TODO: In case JSON is null
-            // Get preferences from SharedPreferences summary
-            // String sortSetting = sharedPref.getString("sortby", "");
 
             // urlConnection and reader declared outside the try/catch so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -327,7 +347,6 @@ public class MoviePosterFragment extends Fragment {
 
             // Will contain the raw JSON response as a string.
             String rawMoviesJsonStr;
-
 
             try {
                 // Create a new URL builder called builder. Duh!
@@ -405,15 +424,14 @@ public class MoviePosterFragment extends Fragment {
             return null;
         }
 
-        // Method to do some work as doInBackground finishes
         protected void onPostExecute(TMDBMovie[] movieArray) {
-            if (movieArray != null) {
 
-                // Log the size of the received array to confirm number of movies
-                Log.d(LOG_TAG, String.valueOf(movieArray.length));
+            // If we receive some stuff in movieArray. Future: What happens on else?
+            if (movieArray != null) {
 
                 // Call the addMovies function to send over our array of TMDBMovie list to the Adapter
                 // Remember that the addMovies will also call this.notifyDataSetChanged()
+                // Beautiful, isn't it? Look at this work of art.
                 mMovieAdapter.addMovies(movieArray);
             }
 
