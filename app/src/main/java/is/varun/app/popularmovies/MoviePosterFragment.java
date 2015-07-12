@@ -121,8 +121,8 @@ public class MoviePosterFragment extends Fragment {
         return rootView;
     }
 
-    /** onResume is specifically for situation when user is returned from the Settings Screen
-     *
+    /** onResume is specifically for situation when user
+     * has returned from the Settings Screen
      */
     @Override
     public void onResume() {
@@ -133,7 +133,7 @@ public class MoviePosterFragment extends Fragment {
         // Declare SharedPreferences prefs and init with getDefaultSharedPreferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
-        // Get sorting preference string which is either 1 or 0
+        // Get user's sort preference string which is either 1 or 0
         String pref_sort_opt = prefs.getString("pref_sort_by", "");
 
         // Use the adapters sortMovies method to sort our movies accordingly. w00t!
@@ -208,8 +208,17 @@ public class MoviePosterFragment extends Fragment {
             // Add all the recently fetched movies to our myMoviesList arraylist
             Collections.addAll(myMoviesList, newmovies);
 
+            /** After adding in the movies we sort the movies according to user's prefs
+            * even though movies are sorted by popularity by default.
+            */
+
+            // Declare SharedPreferences prefs and init with getDefaultSharedPreferences
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+            // Get user's sort preference string which is either 1 or 0
             String pref_sort_opt = prefs.getString("pref_sort_by", "");
+
+            // Sort according to the pref
             this.sortMovies(pref_sort_opt);
 
             // Inform the adapter our data has changed
@@ -219,6 +228,8 @@ public class MoviePosterFragment extends Fragment {
         /**
          * A custom sort function to sort Movies in the myMoviesList.
          * This method also notifies of data changes
+         *
+         * Note: Uses Comparator on BigDecimal. Need to import java.math.BigDecimal
          *
          * @param sort_by should be either "1" for popular or "0" for vote
          */
