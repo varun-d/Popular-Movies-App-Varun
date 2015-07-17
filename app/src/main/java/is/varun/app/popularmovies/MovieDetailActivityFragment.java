@@ -40,7 +40,7 @@ public class MovieDetailActivityFragment extends Fragment {
         TextView movieRelDateView = (TextView) rootView.findViewById(R.id.movie_year);
         TextView movieVoteView = (TextView) rootView.findViewById(R.id.movie_rating);
         TextView movieOverviewViewLOL = (TextView) rootView.findViewById(R.id.movie_desc);
-        TextView movieRuntimeView = (TextView) rootView.findViewById(R.id.movie_runtime);
+        //TextView movieRuntimeView = (TextView) rootView.findViewById(R.id.movie_runtime);
         ImageView moviePosterView = (ImageView) rootView.findViewById(R.id.movie_poster);
 
         // setText to the above intent message (String)
@@ -50,7 +50,7 @@ public class MovieDetailActivityFragment extends Fragment {
         movieOverviewViewLOL.setText(mMovie.getMovieOverview());
 
         // Hiding Runtime for now
-        movieRuntimeView.setVisibility(View.INVISIBLE);
+       // movieRuntimeView.setVisibility(View.INVISIBLE);
 
         // Feeling adventurous here...
         Glide.with(mContext).load(mMovie.getMoviePosterURL())

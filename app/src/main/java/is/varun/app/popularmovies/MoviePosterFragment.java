@@ -144,7 +144,7 @@ public class MoviePosterFragment extends Fragment {
     /**
      * Temporary sexy method to calculate number of GridView columns dynamically
      * @param c is our current application context
-     * @return
+     * @return calculated number of columns
      */
     private int calculatedColumns(Context c) {
         float scalefactor = getResources().getDisplayMetrics().density * 100;

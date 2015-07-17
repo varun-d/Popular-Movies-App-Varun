@@ -45,19 +45,19 @@ Returned JSON object with all the information in it. The following key's are imp
 
 ## Next steps after code review from the Nanodegree team: July 13th 2015
 
-onCreateView: Take advantage of savedInstanceState! It won't be null if you use onSaveInstanceState method from Activity class. You can keep important values, such artists' and tracks' list, too rebuild the fragment once the device rotates.
+    onCreateView: Take advantage of savedInstanceState! It won't be null if you use onSaveInstanceState method from Activity class. You can keep important values, such artists' and tracks' list, too rebuild the fragment once the device rotates.
 
-You could have even used 2 columns for your portrait layout, but 2 columns in landscape looks pretty strange. There's a lot of room to use to display the posters! So it would improve your interface if you managed to display at least 3 columns in portrait and up to 5 in landscape :D
+    You could have even used 2 columns for your portrait layout, but 2 columns in landscape looks pretty strange. There's a lot of room to use to display the posters! So it would improve your interface if you managed to display at least 3 columns in portrait and up to 5 in landscape :D
 
-How to check device's orientation? http://stackoverflow.com/questions/2795833/check-orientation-on-android-phone
+    How to check device's orientation? http://stackoverflow.com/questions/2795833/check-orientation-on-android-phone
 
-Your request process is right! But right now you are redoing it everytime the activity is recreated (device is rotated, for example). It would be awesome if you implemented a way to save your results to bundle at onSaveInstanceState() and retrieve it at onCreate() or onRestoreInstanceState().
+    Your request process is right! But right now you are redoing it everytime the activity is recreated (device is rotated, for example). It would be awesome if you implemented a way to save your results to bundle at onSaveInstanceState() and retrieve it at onCreate() or onRestoreInstanceState().
 
-You can take a look at this links:
+    You can take a look at this links:
 
-Serialize a parsable array: http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
+    Serialize a parsable array: http://stackoverflow.com/questions/12503836/how-to-save-custom-arraylist-on-android-screen-rotate
 
-Impliment a Parsable Object: http://developer.android.com/reference/android/os/Parcelable.html
+    Impliment a Parsable Object: http://developer.android.com/reference/android/os/Parcelable.html
 
 ## Note on JSON Parsing using Retrifit
 http://square.github.io/retrofit/
@@ -78,7 +78,7 @@ public interface GitHubService {
 
 Where @GET is an annotation to use this method as a GET request, List<Repo> is the type of object listRepos() will return and @Path() is an annotation to replace {user} at the @GET path by a String given in String user argument.
 
-###2. An implementation
+### 2. An implementation
 After having your interface declared, you will need to implement that. It's really easy, you can create a separate class (I like to call it Webservice.java) and use:
 
 ```java
@@ -97,7 +97,7 @@ Now, you have a variable service that accounts for every single method you have 
 List<Repo> repos = service.listRepos("octocat");
 ```
 
-###3. Models
+### 3. Models
 You can see the example above uses a Repo class. It is the representation of the returning JSON data. Remind yourself that JSON will be serialized to Java as following:
 Objects becomes Custom Objects
 Arrays = ArrayList<T>
