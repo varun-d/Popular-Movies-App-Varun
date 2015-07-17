@@ -86,6 +86,10 @@ public class MoviePosterFragment extends Fragment {
         // Declare a new GridView poster_gv and init with poster_gridview view
         GridView poster_gv = (GridView) rootView.findViewById(R.id.poster_gridview);
 
+        // Set number of columns dynamically based on pixel density!
+        // TODO: This *may* change for tablet view
+        poster_gv.setNumColumns(calculatedColumns(thisContext));
+
         // Init the mMovieAdapter with the newMovieAdapter
         mMovieAdapter = new MovieAdapter(thisContext);
 
@@ -137,7 +141,19 @@ public class MoviePosterFragment extends Fragment {
         return rootView;
     }
 
-    @Override public void onSaveInstanceState(Bundle saveBundle) {
+    /**
+     * Temporary sexy method to calculate number of GridView columns dynamically
+     * @param c is our current application context
+     * @return
+     */
+    private int calculatedColumns(Context c) {
+        float scalefactor = getResources().getDisplayMetrics().density * 100;
+        int number = c.getResources().getDisplayMetrics().widthPixels;
+        return (int) ((float) number / scalefactor);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle saveBundle) {
         // Calling superman
         super.onSaveInstanceState(saveBundle);
 
