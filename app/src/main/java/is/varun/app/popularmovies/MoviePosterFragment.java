@@ -3,13 +3,11 @@ package is.varun.app.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -33,6 +30,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.math.BigDecimal;
@@ -60,8 +58,17 @@ public class MoviePosterFragment extends Fragment {
     // LOG_TAG used for logging
     private final static String LOG_TAG = "MoviePosterFragment";
 
+    // Key used for onSavedInstanceState
+    private final static String SAVED_MOVIES_KEY = "MOVIES_KEY";
+
     //Declaring global adapter of custom MovieAdapter object that extends from BaseAdapter
     public MovieAdapter mMovieAdapter;
+
+    // Declare a new ArrayList of TMDBMovie called savedList for restoration needs
+    public ArrayList<TMDBMovie> savedList;
+
+    // getMoviesNow AsyncTast to fetch all movies and .addMovies onPostExecute
+    FetchMovieTask getMoviesAsyncTask = new FetchMovieTask();
 
     // Lonely empty constructor. I could write a whole novel about this guy (or not)
     public MoviePosterFragment() {
@@ -85,9 +92,18 @@ public class MoviePosterFragment extends Fragment {
         // Set the new adapter on the GridView
         poster_gv.setAdapter(mMovieAdapter);
 
-        // getMoviesNow AsyncTast to fetch all movies
-        FetchMovieTask getMoviesNow = new FetchMovieTask();
-        getMoviesNow.execute();
+        if (savedInstanceState == null || !savedInstanceState.containsKey(SAVED_MOVIES_KEY)) {
+            // If savedInstanceState is null and we do not find our movies, then run our async task
+            // to fetch movies
+            getMoviesAsyncTask.execute();
+
+        } else {
+            // Declare savedList with our MoviesArrayList bundle from savedInstanceState bunde
+            savedList = savedInstanceState.getParcelableArrayList(SAVED_MOVIES_KEY);
+
+            // Add the savedList movies back into our Adapter .addMovies notifies of data change
+            mMovieAdapter.addMovies(savedList);
+        }
 
         // serOnItemClickListener for our sweet GridView
         poster_gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -119,6 +135,14 @@ public class MoviePosterFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override public void onSaveInstanceState(Bundle saveBundle) {
+        // Calling superman
+        super.onSaveInstanceState(saveBundle);
+
+        // Put our array of movies from our Adapter. God I love adapters!
+        saveBundle.putParcelableArrayList(SAVED_MOVIES_KEY, mMovieAdapter.getMyMoviesList());
     }
 
     /** onResume is specifically for situation when user
@@ -163,21 +187,6 @@ public class MoviePosterFragment extends Fragment {
             // Init myMoviesList new ArrayList within the constructor. Empty.
             myMoviesList = new ArrayList<>();
 
-            /* Initial idea was to populate the empty arraylist with a sample movie.
-            // Not for production
-            Resources res = c.getResources();
-
-            // Create a sample movie object. Keeping for future tests
-             TMDBMovie sample = new TMDBMovie(res.getString(R.string.movie_id_sample));
-             sample.setMovieTitle(res.getString(R.string.movie_title_sample));
-             sample.setMovieOverview(res.getString(R.string.movie_overview_sample));
-             sample.setMovieVote(res.getString(R.string.movie_vote_sample));
-             sample.setMovieReleaseDate(res.getString(R.string.movie_rel_sample));
-             sample.setMoviePop(res.getString(R.string.movie_pop_sample));
-             //sample.setMoviePosterURI(res.getString(R.string.movie_posterURL_sample));
-
-             // Insert the sample movie object into the myMoviesList
-             myMoviesList.add(sample); */
         }
 
         // getCount gets the size of myMoviesList
@@ -201,12 +210,12 @@ public class MoviePosterFragment extends Fragment {
         /**
          * A custom Add function to add Movies to the myMoviesList. This method also notifies of data changes!
          *
-         * @param newmovies the list of movies to add
+         * @param newMovies the list of movies to add
          */
-        public void addMovies(TMDBMovie[] newmovies) {
+        public void addMovies(ArrayList<TMDBMovie> newMovies) {
 
             // Add all the recently fetched movies to our myMoviesList arraylist
-            Collections.addAll(myMoviesList, newmovies);
+            myMoviesList.addAll(newMovies);
 
             /** After adding in the movies we sort the movies according to user's prefs
             * even though movies are sorted by popularity by default.
@@ -261,6 +270,15 @@ public class MoviePosterFragment extends Fragment {
                 });
                 this.notifyDataSetChanged();
             }
+        }
+
+        /**
+         * Returns the myMoviesList object
+         *
+         * @return an ArrayList of TMDBMovies object
+         */
+        public ArrayList<TMDBMovie> getMyMoviesList(){
+            return myMoviesList;
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -443,7 +461,7 @@ public class MoviePosterFragment extends Fragment {
                 // Call the addMovies function to send over our array of TMDBMovie list to the Adapter
                 // Remember that the addMovies will also call this.notifyDataSetChanged()
                 // Beautiful, isn't it? Look at this work of art.
-                mMovieAdapter.addMovies(movieArray);
+                mMovieAdapter.addMovies(new ArrayList<>(Arrays.asList(movieArray)));
             }
 
         }
