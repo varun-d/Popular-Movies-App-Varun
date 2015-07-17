@@ -33,7 +33,7 @@ public class MovieDetailActivityFragment extends Fragment {
         Context mContext = rootView.getContext();
 
         // Create new TMDBMovie object to init with getSerializableExtra from the intent
-        TMDBMovie mMovie = (TMDBMovie) intent.getSerializableExtra(MoviePosterFragment.SER_KEY);
+        TMDBMovie mMovie = (TMDBMovie) intent.getParcelableExtra(MoviePosterFragment.SER_KEY);
 
         // Objectify all views that we need to update
         TextView movieTitleView = (TextView) rootView.findViewById(R.id.movie_title);

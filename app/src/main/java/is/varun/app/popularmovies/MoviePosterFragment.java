@@ -105,7 +105,7 @@ public class MoviePosterFragment extends Fragment {
                 // Insert the Object in the mBundle through putSerializable
                 // Remember that for this to work TMDBMovie class has to implement Serializable
                 // and use private static final long serialVersionUID = 1337L;
-                mBundle.putSerializable(SER_KEY, clickedMovie);
+                mBundle.putParcelable(SER_KEY, clickedMovie);
 
                 // putExtras, add the mBundle to the new Intent
                 movieDetailActivityintent.putExtras(mBundle);

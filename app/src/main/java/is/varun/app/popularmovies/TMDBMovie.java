@@ -1,8 +1,11 @@
 package is.varun.app.popularmovies;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * A class to store movies
@@ -11,11 +14,11 @@ import java.io.Serializable;
  * @version 1.0
  *
  */
-public class TMDBMovie implements Serializable {
+public class TMDBMovie implements Parcelable {
 
     private static final long serialVersionUID = 1337L;
+    private static final String LOG_TAG = "TMDBMovie ClassLog";
 
-    private String LOG_TAG = "TMDBMovie ClassLog";
     private String movieID;             // '0000' REQUIRED
     private String movieTitle;          // '(Untitled)'
     private String movieOverview;       // 'Awaiting movie description'
@@ -217,4 +220,49 @@ public class TMDBMovie implements Serializable {
         Log.v(LOG_TAG, moviePosterURI);
         Log.v(LOG_TAG, moviePop);
     }
+
+    /**
+     * Override Parcelable's describeContents() method
+     * @return 0 for now
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Override writeToParcel method
+     *
+     * @param dest default argument for our Parcel
+     * @param flags default argument for our Parcel
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(movieID);
+        dest.writeString(movieTitle);
+        dest.writeString(movieOverview);
+        dest.writeString(movieReleaseDate);
+        dest.writeString(moviePosterURI);
+        dest.writeString(movieVote);
+        dest.writeString(moviePop);
+    }
+
+    private TMDBMovie(Parcel in) {
+        movieID = in.readString();
+        movieTitle = in.readString();
+        movieOverview = in.readString();
+        movieReleaseDate = in.readString();
+        moviePosterURI = in.readString();
+        movieVote = in.readString();
+        moviePop = in.readString();
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public TMDBMovie createFromParcel(Parcel in) {
+            return new TMDBMovie(in);
+        }
+        public TMDBMovie[] newArray(int size) {
+            return new TMDBMovie[size];
+        }
+    };
 }
