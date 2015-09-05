@@ -4,19 +4,47 @@ This public repo is for a practice project under the Udacity's Andoird NanoD pro
 
 # Popular Movies App
 
-This app was submitted on July 13th 2015
+Stage 1 was submitted on July 13th 2015
 
 # What does the app do
 
 I have tried to comment everyline of code for easy understanding of the process.
 
 1. The main screen showing latest movie posters from the The Movie Database.
-2. OnClick of each poster takes you to the detail page displaying:
-    a. Movie Title
-    b. Movie Poster
-    c. Release date
-    d. Average Vote
-    e. Overview text
+2. OnClick of each poster takes you to the detail page
+
+# Things it needs to do for stage 2:
+
+## UI
+
+1. Main screen will show Movie Poster grid. Sortable by Popular/Votes/Favorites
+2. OnClick of a poster, user is taken to the detail screen showing:
+    1. Movie Title
+    2. Movie Poster
+    3. Movie Release Date
+    4. Movie Avg. Rating
+    5. Link to Trailer(s)
+    6. Show few Movie Reviews by users
+    7. A toggle showing Favorite/Not Movie
+3. On Tablet, UI would show the detail fragment beside it.
+
+## Logic
+
+1. Main Screen: Pull in list of movies from /discover/ API
+2. For each movie request, /movie/{id}/videos (list of URLs)
+3. For each movie request, /movie/{id}/reviews (list of reviews)
+4. OnClick, send over TMDBMovie object to the detail screen/fragment
+
+# Workbreakdown
+
+1. Research /videos and /reviews content
+    Done. Note that sometimes videos or reviews will be missing. Or Videos may have multiple trailers. In any case we keep this simple, with one video link. This info will be pulled in using one API call by append_to_response param.
+2. Plan out rough wireframe on what content would be shown
+3. Modify TMDBMovie Object to reflect videos and reviews and favorited.
+4. Research Retrofit Lib / REST Library to build the TMDBMovie Object efficiently
+5. Modify current JSON parsing to use retrofit
+6. Modify FetchMoviesTask to also request /video and /reviews
+7. Decouple FetchMoviesTask from the fragmet file
 
 # Topics covered
 
@@ -26,7 +54,9 @@ I have tried to comment everyline of code for easy understanding of the process.
 
 # General Notes on the movie API
 
-Main URL of the API: http://api.themoviedb.org/3/discover/movie&sort_by=popularity.desc&API_KEY=[Your API Key Here from TMDB]
+Main URL of the API: https://api.themoviedb.org/3/discover/movie?api_key={api_key}&sort_by=popularity.desc
+
+Then for each {movie_id} https://api.themoviedb.org/3/movie/{movie_id}?api_key={api_key}&append_to_response=reviews,trailers
 
 Every poster image needs to have the main URL as: http://image.tmdb.org/t/p/
 Add a size URI like /w185/ which specifies the max width of our image.
