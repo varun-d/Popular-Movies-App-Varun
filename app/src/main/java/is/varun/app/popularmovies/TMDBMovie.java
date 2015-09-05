@@ -8,7 +8,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * A class to store movies
+ * A class to store movie data. This is a general Parcelable holder for more than just the
+ * name, release date, etc.
+ * TODO: It should also hold the trailer and reviews data!
  *
  * @author Varun D
  * @version 1.0
