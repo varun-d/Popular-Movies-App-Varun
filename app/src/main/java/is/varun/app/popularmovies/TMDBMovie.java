@@ -5,21 +5,25 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * A class to store movie data. This is a general Parcelable holder for more than just the
  * name, release date, etc.
- * TODO: It should also hold the trailer and reviews data!
  *
  * @author Varun D
- * @version 1.0
+ * @version 1.2
+ * @since Sep 12, 2105
  *
  */
 public class TMDBMovie implements Parcelable {
 
     private static final long serialVersionUID = 1337L;
-    private static final String LOG_TAG = "TMDBMovie ClassLog";
+
+    private static final String LOG_TAG = "TMDBMovie";
 
     private String movieID;             // '0000' REQUIRED
     private String movieTitle;          // '(Untitled)'
@@ -29,201 +33,99 @@ public class TMDBMovie implements Parcelable {
     private String movieVote;           // '0.0' String.format("%.5g%n", 0.912385);
     private String moviePop;            // '00.00/100'
 
-    /**
-     * Constructor for objects of class TMDBMovie
-     * @param  newID: Movie ID of type String
-     */
-    public TMDBMovie(String newID)
-    {
-        // Initialise movie ID and take it from there
-        setMovieID(newID);
-    }
+    // The following member Variables are taken from the second detailed call using URL:
+    // /3/movie/{movie_id}?api_key={api_key}&append_to_response=reviews,trailers
 
-    /**
-     * Set MovieID
-     * @param  newID: Movie ID of type String
-     */
-    public void setMovieID (String newID)
-    {
-        movieID = newID;
-    }
+    private String movieRuntime;
+    private String movieTagline;
+    private String movieIMDBLink;
+    private int movieReviewNum;
+    private ArrayList<String> movieReviews = new ArrayList<>();
+    private int movieTrailerNum;
+    private ArrayList<String> movieTrailers = new ArrayList<>();
 
-    /**
-     * Get MovieID
-     * @return  ID of the movie
-     */
-    public Long getMovieID ()
-    {
-        return Long.valueOf(movieID);
-    }
+    // Constructor
+    public TMDBMovie(String newID) { setMovieID(newID); }
 
-    /**
-     * Set the Movie Title
-     *
-     * @param  newTitle is the String title of the movie. Some TMDB movies may have unicode titles.
-     */
-    public void setMovieTitle (String newTitle)
-    {
-        // If newTitle is null String then assign movie name as '(Untitled)' TODO Unicode.
-        if ( newTitle == null ) {
-            movieTitle = "(Untitled)";
-        } else {
-            movieTitle = newTitle;
-        }
-    }
+    // Movie ID
+    public void setMovieID (String newID) { movieID = newID; }
 
-    /**
-     * Get the Movie Title
-     *
-     * @return the movie title
-     */
-    public String getMovieTitle ()
-    {
-        return movieTitle;
-    }
+    public Long getMovieID () { return Long.valueOf( movieID ); }
 
+    // Movie Title
+    public void setMovieTitle (String newTitle) { movieTitle = newTitle.isEmpty() ? "(Untitled)" : newTitle; }
 
-    /**
-     * Set the Movie Overview
-     *
-     * @param  newOverview   a sample parameter for a method
-     */
+    public String getMovieTitle () { return movieTitle; }
+
+    // Movie Overview
     public void setMovieOverview (String newOverview)
     {
-        if ( newOverview == null ) {
-            movieOverview = "Movie description not found.";
-        } else {
-            movieOverview = newOverview;
-        }
+        movieOverview = newOverview.isEmpty() ? "Google the movie name to find out more!" : newOverview;
     }
 
-    /**
-     * Get the Movie Overview
-     *
-     * @return  the movie overview
-     */
-    public String getMovieOverview ()
-    {
-        return movieOverview;
-    }
+    public String getMovieOverview () { return movieOverview; }
 
-    /**
-     * Set the Movie Release Date
-     *
-     * @param  newMovieReleaseDate   a sample parameter for a method
-     */
+    // Movie Release Date
     public void setMovieReleaseDate (String newMovieReleaseDate)
     {
-        if ( newMovieReleaseDate == null ) {
-            movieReleaseDate = "Date Empty";
-        } else {
-            movieReleaseDate = newMovieReleaseDate;
-        }
+        movieReleaseDate = newMovieReleaseDate.isEmpty() ? "0000-00-00" : newMovieReleaseDate;
     }
 
-    /**
-     * Get the Movie Release Date
-     *
-     * @return  the movie release date
-     */
-    public String getMovieReleaseDate ()
-    {
-        return movieReleaseDate;
-    }
+    public String getMovieReleaseDate () { return movieReleaseDate; }
 
-    /**
-     * Set the Movie Average Vote out of 10 points
-     *
-     * @param  newMovieVote   in string format
-     */
-    public void setMovieVote (String newMovieVote)
-    {
-        if ( newMovieVote == null ) {
-            movieVote = "0/10";
-        } else {
-            movieVote = newMovieVote;
-        }
-    }
+    // Movie Vote
+    public void setMovieVote (String newMovieVote) { movieVote = newMovieVote.isEmpty() ? "0/10" : newMovieVote; }
 
-    /**
-     * Get the Movie Average Vote out of 10 points
-     *
-     * @return the average movie rating
-     */
-    public String getMovieVote ()
-    {
-        return movieVote;
-    }
+    public String getMovieVote () { return movieVote; }
 
-    /**
-     * Set the Movie Popularity out of 100 points
-     *
-     * @param  newMoviePop   in string format
-     */
-    public void setMoviePop (String newMoviePop)
-    {
-        if ( newMoviePop == null ) {
-            moviePop = "0/100";
-        } else {
-            moviePop = newMoviePop;
-        }
-    }
+    // Movie Popularity
+    public void setMoviePop (String newMoviePop) { moviePop = newMoviePop.isEmpty() ? "0/100" : newMoviePop; }
 
-    /**
-     * Get the Movie Popularity out of 100 points
-     *
-     * @return the popularity of movie out of 100
-     */
-    public String getMoviePop ()
-    {
-        return moviePop;
-    }
+    public String getMoviePop () { return moviePop; }
 
-    /**
-     * Set the Movie Poster URL in format of /uXZYawqUsChGSj54wcuBtEdUJbh.jpg
-     *
-     * @param  posterURI   String should look like "/uXZYawqUsChGSj54wcuBtEdUJbh.jpg"
-     */
-    public void setMoviePosterURI (String posterURI)
-    {
-        if ( posterURI == null ) {
-            moviePosterURI = "https://placeholdit.imgix.net/~text?txtsize=17&txt=poster%20placeholder&w=185&h=278";
-        } else {
-            moviePosterURI = posterURI;
-        }
-    }
+    // Movie Poser URI/URL
+    public void setMoviePosterURI (String posterURI) { moviePosterURI = posterURI; }
 
-    /**
-     * Get the Movie Poster URL in format of /uXZYawqUsChGSj54wcuBtEdUJbh.jpg
-     *
-     * @return the movie poster URL moviePosterURI
-     */
-    public String getMoviePosterURI ()
-    {
-        return moviePosterURI;
-    }
+    public String getMoviePosterURI () { return moviePosterURI; }
 
-    public String getMoviePosterURL ()
-    {
-        return "http://image.tmdb.org/t/p/w185" + moviePosterURI;
-    }
+    public String getMoviePosterURL () { return "http://image.tmdb.org/t/p/w185" + moviePosterURI; }
+
+    // Movie Runtime
+    public void setMovieRuntime (String _var) { movieRuntime = _var; }
+
+    public String getMovieRuntime () { return movieRuntime; }
+
+    // Movie Tagline
+    public void setMovieTagline (String _var) { movieTagline = _var; }
+
+    public String getMovieTagline () { return movieTagline; }
+
+    // Movie's IMDB link
+    public void setMovieIMDBLink (String _var) { movieIMDBLink = _var; }
+
+    public String getMovieIMDBLink () { return movieIMDBLink; }
+
+    // Movie Reviews. Must always be used as this inits the movieReviews Array to apr length
+    public void setMovieReviewNum (int _var) { movieReviewNum = _var; }
+
+    public int getMovieReviewNum () { return movieReviewNum; }
+
+    public void setMovieReviews (ArrayList<String> args) { movieReviews.addAll(args); }
+
+    public ArrayList<String> getMovieReviews () {return movieReviews;}
+
+    // Movie Trailers movieTrailerNum
+
+    public void setMovieTrailerNum (int _var) { movieTrailerNum = _var; }
+
+    public int getMovieTrailerNum () { return movieTrailerNum; }
+
+    public void setMovieTrailers (ArrayList<String> args) { movieTrailers.addAll(args); }
 
 
-    /**
-     * Debug function. Verbose Log all captured data for a given movie
-     */
-    public void debugMovieInfo ()
-    {
-        Log.v(LOG_TAG, movieTitle);
-        Log.v(LOG_TAG, movieID);
-        Log.v(LOG_TAG, movieOverview);
-        Log.v(LOG_TAG, movieVote);
-        Log.v(LOG_TAG, movieReleaseDate);
-        Log.v(LOG_TAG, moviePosterURI);
-        Log.v(LOG_TAG, moviePop);
-    }
 
-    /**
+
+    /* * * * * * * * * * * * * * *
      * Override Parcelable's describeContents() method
      * @return 0 for now
      */
@@ -247,6 +149,13 @@ public class TMDBMovie implements Parcelable {
         dest.writeString(moviePosterURI);
         dest.writeString(movieVote);
         dest.writeString(moviePop);
+        dest.writeString(movieRuntime);
+        dest.writeString(movieTagline);
+        dest.writeString(movieIMDBLink);
+        dest.writeInt(movieReviewNum);
+        dest.writeInt(movieTrailerNum);
+        dest.writeStringList(movieReviews);
+        dest.writeStringList(movieTrailers);
     }
 
     private TMDBMovie(Parcel in) {
@@ -257,6 +166,13 @@ public class TMDBMovie implements Parcelable {
         moviePosterURI = in.readString();
         movieVote = in.readString();
         moviePop = in.readString();
+        movieRuntime = in.readString();
+        movieTagline = in.readString();
+        movieIMDBLink = in.readString();
+        movieReviewNum = in.readInt();
+        movieTrailerNum = in.readInt();
+        in.readStringList(movieReviews);
+        in.readStringList(movieTrailers);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -267,4 +183,21 @@ public class TMDBMovie implements Parcelable {
             return new TMDBMovie[size];
         }
     };
+
+
+
+
+    /* * * * * * * * * * * * * * *
+     * Debug function. Verbose Log all captured data for a given movie
+     */
+    public void debugMovieInfo ()
+    {
+        Log.v(LOG_TAG, movieTitle);
+        Log.v(LOG_TAG, movieID);
+        Log.v(LOG_TAG, movieOverview);
+        Log.v(LOG_TAG, movieVote);
+        Log.v(LOG_TAG, movieReleaseDate);
+        Log.v(LOG_TAG, moviePosterURI);
+        Log.v(LOG_TAG, moviePop);
+    }
 }

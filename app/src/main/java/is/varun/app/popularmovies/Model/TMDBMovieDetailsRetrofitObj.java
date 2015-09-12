@@ -19,6 +19,9 @@ public class TMDBMovieDetailsRetrofitObj {
     // Good for our UI
     public String tagline;
 
+    // IMDB ID good for UI
+    public String imdb_id;
+
     // The public Reviews obj
     public Reviews reviews;
 
@@ -37,10 +40,31 @@ public class TMDBMovieDetailsRetrofitObj {
                 results = new ArrayList<>();
             }
 
+            // We may not use id
             public String id;
             public String author;
             public String content;
             public String url;
+        }
+    }
+
+    // The public Trailers obj
+    public Trailers trailers;
+
+    public class Trailers{
+
+        public Trailers() { trailers = new Trailers(); }
+
+        public List<YouTubeResults> youtube;
+
+        public class YouTubeResults{
+
+            public YouTubeResults() {
+                youtube = new ArrayList<>();
+            }
+
+            public String source;
+            public String type;
         }
     }
 

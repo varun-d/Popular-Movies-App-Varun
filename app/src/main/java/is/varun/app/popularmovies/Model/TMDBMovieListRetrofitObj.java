@@ -21,7 +21,7 @@ public class TMDBMovieListRetrofitObj {
     // public String total_results;
 
     // Movie results array is under this key
-    public List<MovieResult> results;
+    public ArrayList<MovieResult> results;
 
     public class MovieResult{
 

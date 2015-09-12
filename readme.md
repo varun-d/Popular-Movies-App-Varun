@@ -35,6 +35,30 @@ I have tried to comment everyline of code for easy understanding of the process.
 3. For each movie request, /movie/{id}/reviews (list of reviews)
 4. OnClick, send over TMDBMovie object to the detail screen/fragment
 
+## Final variables needed to populate UI
+
+From /3/discover/movie?api_key={api_key}&sort_by=popularity.desc
+
+movieID
+movieTitle
+movieOverview
+movieReleaseDate
+moviePosterURI
+movieVote
+moviePop
+
+From /3/movie/{movie_id}?api_key={api_key}&append_to_response=reviews,trailersT
+
+movieRuntime
+movieTagline (to edit the menu bar)
+movieIMDBLink (so we can send them to IMDB)
+movieReviewNum (number of reviews we have, for UI?)
+Array movieReviews
+    mRevContent (review text content)
+
+
+
+
 # Workbreakdown
 
 1. Research /videos and /reviews content
