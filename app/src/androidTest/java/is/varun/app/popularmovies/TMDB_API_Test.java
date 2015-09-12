@@ -83,10 +83,10 @@ public class TMDB_API_Test  extends ApplicationTestCase<Application> {
 //
 //    }
 
-
-    //TODO: Add to TMDBMovie Object but after modifying it.
-
     public void testMakeTMDBObject() throws Exception {
+
+        // // TODO: 9/13/15 Add the second call!
+
         Log.d(LOG_TAG, "testMakeTMDBMovieObject");
 
         TMDBMovieListRetrofitObj movieReplyObject = TMDBservice.getMovies("bb2676cea1c31da46a38029b13b86eaf", "popularity.desc");
@@ -114,6 +114,8 @@ public class TMDB_API_Test  extends ApplicationTestCase<Application> {
             myMovies[i].debugMovieInfo();
 
         }
+
+        // There should be publish progress after first call. Second call must update TMDBMovieObject -> Adapter!
 
         assertEquals(myMovies.length, movieResults.size());
     }

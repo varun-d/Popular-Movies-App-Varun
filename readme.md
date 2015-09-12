@@ -56,9 +56,6 @@ movieReviewNum (number of reviews we have, for UI?)
 Array movieReviews
     mRevContent (review text content)
 
-
-
-
 # Workbreakdown
 
 1. Research /videos and /reviews content

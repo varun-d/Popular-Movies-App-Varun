@@ -1,6 +1,7 @@
 package is.varun.app.popularmovies;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +36,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.math.BigDecimal;
+
+import is.varun.app.popularmovies.Model.TMDBMovieListRetrofitObj;
+import retrofit.RestAdapter;
 
 /**
  * MoviePosterFragment
@@ -182,132 +187,52 @@ public class MoviePosterFragment extends Fragment {
 
     private class FetchMovieTask extends AsyncTask<String, Integer, TMDBMovie[]> {
 
-        private TMDBMovie[] getMoviesDataFromJson(String moviesJsonStr) throws JSONException {
+        protected TMDBMovie[] doInBackground(String... sParams) {
 
-            // These are the names of the JSON objects that need to be extracted.
-            final String TAG_RESULTS = "results";
-            final String TAG_ID = "id";
-            final String TAG_TITLE = "original_title";
-            final String TAG_OVERVIEW = "overview";
-            final String TAG_RELDATE = "release_date";
-            final String TAG_POSTER_URI = "poster_path";
-            final String TAG_VOTE = "vote_average";
-            final String TAG_POP = "popularity";
+            TMDBApiRetrofit TMDBservice;
+            TMDBMovieListRetrofitObj movieReplyObject;
+            TMDBMovie[] myMovies = null;
 
-            // Declare and init a new JSONObject through the moviesJsonStr we just received
-            JSONObject moviesJsonObj = new JSONObject(moviesJsonStr);
+            try {
+                final String API_URL = "https://api.themoviedb.org";
 
-            // getJSONArray within "results" as per July 10 2015 TMDB API
-            JSONArray movieResultsArray = moviesJsonObj.getJSONArray(TAG_RESULTS);
+                TMDBservice = new RestAdapter.Builder()
+                        .setEndpoint(API_URL)
+                        .setLogLevel(RestAdapter.LogLevel.FULL)
+                        .build()
+                        .create(TMDBApiRetrofit.class);
 
-            // Declare and init a new TMDBMovie object the length of our "result" array
-            TMDBMovie[] myMovies = new TMDBMovie[movieResultsArray.length()];
+                movieReplyObject = TMDBservice.getMovies("bb2676cea1c31da46a38029b13b86eaf", "popularity.desc");
 
-            // Run through the results array
-            for (int i = 0; i < movieResultsArray.length(); i++) {
+                ArrayList<TMDBMovieListRetrofitObj.MovieResult> movieResults = movieReplyObject.results;
 
-                // Get the JSON object representing the movie at position i
-                JSONObject thisMovie = movieResultsArray.getJSONObject(i);
+                Log.d(LOG_TAG, Integer.toString(movieResults.size()));
 
-                // Create a new movie in the myMovies Object Array with the constructor value of ID
-                myMovies[i] = new TMDBMovie(thisMovie.getString(TAG_ID));
+                myMovies = new TMDBMovie[movieResults.size()];
 
-                // Set rest of the values through it's setter methods. This may need to be updated later
-                myMovies[i].setMovieTitle(thisMovie.getString(TAG_TITLE));
-                myMovies[i].setMovieOverview(thisMovie.getString(TAG_OVERVIEW));
-                myMovies[i].setMovieReleaseDate(thisMovie.getString(TAG_RELDATE));
-                myMovies[i].setMovieVote(thisMovie.getString(TAG_VOTE));
-                myMovies[i].setMoviePop(thisMovie.getString(TAG_POP));
-                myMovies[i].setMoviePosterURI(thisMovie.getString(TAG_POSTER_URI));
+                for (int i = 0; i < movieResults.size(); i++) {
+
+                    TMDBMovieListRetrofitObj.MovieResult res = movieResults.get(i);
+
+                    myMovies[i] = new TMDBMovie(res.id);
+                    myMovies[i].setMovieTitle(res.original_title);
+                    myMovies[i].setMovieOverview(res.overview);
+                    myMovies[i].setMovieReleaseDate(res.release_date);
+                    myMovies[i].setMovieVote(res.vote_average);
+                    myMovies[i].setMoviePop(res.popularity);
+                    myMovies[i].setMoviePosterURI(res.poster_path);
+
+                }
+
+                // // TODO: 9/13/15 Add second call but remember to publish progress here
+
+            } catch (Exception e){
+                Log.d(LOG_TAG,e.toString());
+                return null;
             }
-
             return myMovies;
         }
 
-        protected TMDBMovie[] doInBackground(String... sParams) {
-
-            // urlConnection and reader declared outside the try/catch so that they can be closed in the finally block.
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String rawMoviesJsonStr;
-
-            try {
-                // Create a new URL builder called builder. Duh!
-                Uri.Builder builder = new Uri.Builder();
-
-                // Let the builder build the URL in the format of http://api.themoviedb.org/3/movie/popular?api_key=bb2676cea1c31da46a38029b13b86eaf
-                // TODO: Move API_KEY to settings in the future
-                builder.scheme("http")
-                        .authority("api.themoviedb.org")
-                        .appendPath("3")
-                        .appendPath("discover")
-                        .appendPath("movie")
-                        .appendQueryParameter("api_key", "bb2676cea1c31da46a38029b13b86eaf")
-                        .appendQueryParameter("sort_by", "popularity.desc");
-
-                // Build the URL, toString it and send it over to 'url' to be processed
-                String myUrl = builder.build().toString();
-                URL url = new URL(myUrl);
-
-                // Create the request to TMDB, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    rawMoviesJsonStr = null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    rawMoviesJsonStr = null;
-                }
-
-                rawMoviesJsonStr = buffer.toString();
-
-                // Log rawMoviesJsonStr to check if we have received any reply
-                Log.d(LOG_TAG, rawMoviesJsonStr);
-
-                try {
-                    // Use the helper function to turn JSON into Movies object using our TMDBMovie class
-                    return getMoviesDataFromJson(rawMoviesJsonStr);
-
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
-                }
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error running doInBackground.", e);
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream. Stuck in dryer.", e);
-                    }
-                }
-            }
-            return null;
-        }
 
         protected void onPostExecute(TMDBMovie[] movieArray) {
 
@@ -318,6 +243,18 @@ public class MoviePosterFragment extends Fragment {
                 // Remember that the addMovies will also call this.notifyDataSetChanged()
                 // Beautiful, isn't it? Look at this work of art.
                 mMovieAdapter.addMovies(new ArrayList<>(Arrays.asList(movieArray)));
+            } else {
+
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+                alertDialog.setTitle("Notice");
+                alertDialog.setMessage("Seems to be a network error my friend.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Okie Dokie",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
 
         }
