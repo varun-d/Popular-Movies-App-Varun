@@ -83,14 +83,17 @@ public class TMDB_API_Test  extends ApplicationTestCase<Application> {
 //
 //    }
 
+    // TEST 1: Calls to each ID is done within the main loop itself.
     public void testMakeTMDBObject() throws Exception {
 
         // // TODO: 9/13/15 Add the second call!
 
         Log.d(LOG_TAG, "testMakeTMDBMovieObject");
 
+        // This is called once to populate the initial data, i.e. posters.
         TMDBMovieListRetrofitObj movieReplyObject = TMDBservice.getMovies("bb2676cea1c31da46a38029b13b86eaf", "popularity.desc");
-        // TMDBMovieDetailsRetrofitObj dataMovieDetails = TMDBservice.getMovieDetails("76341", "bb2676cea1c31da46a38029b13b86eaf", "reviews,trailers");
+
+        // This is called for each movie id... Should this call be done within the main app screen itself, or should it be done in the detail screen?
 
         ArrayList<TMDBMovieListRetrofitObj.MovieResult> movieResults = movieReplyObject.results;
 
@@ -100,22 +103,43 @@ public class TMDB_API_Test  extends ApplicationTestCase<Application> {
 
         for (int i = 0; i < movieResults.size(); i++) {
 
+            ArrayList<String> _tempReviewArray = new ArrayList<>();
+
             TMDBMovieListRetrofitObj.MovieResult res = movieResults.get(i);
 
             myMovies[i] = new TMDBMovie ( res.id );
 
-            myMovies[i].setMovieTitle( res.original_title );
+            // Get details for each movie id! This is done within a loop in TEST 1
+            TMDBMovieDetailsRetrofitObj dataMovieDetails = TMDBservice.getMovieDetails(res.id, "bb2676cea1c31da46a38029b13b86eaf", "reviews,trailers");
+
+            // This shit is mental...
+            ArrayList<TMDBMovieDetailsRetrofitObj.Reviews.ReviewResults> movieReviews = dataMovieDetails.reviews.results;
+
+
+            myMovies[i].setMovieTitle(res.original_title);
             myMovies[i].setMovieOverview(res.overview);
             myMovies[i].setMovieReleaseDate(res.release_date);
             myMovies[i].setMovieVote(res.vote_average);
             myMovies[i].setMoviePop(res.popularity);
             myMovies[i].setMoviePosterURI(res.poster_path);
 
+            if (movieReviews.size() >= 1) {
+                for (int j = 0; j < movieReviews.size(); j++) {
+                    if (movieReviews.get(j).content != null) { _tempReviewArray.add(j, movieReviews.get(j).content); }
+
+                }
+                myMovies[i].setMovieReviews(_tempReviewArray);
+            }
+
+            myMovies[i].setMovieIMDBLink(dataMovieDetails.imdb_id);
+
+
+
             myMovies[i].debugMovieInfo();
 
         }
 
-        // There should be publish progress after first call. Second call must update TMDBMovieObject -> Adapter!
+        // Process the second call here for test 2!
 
         assertEquals(myMovies.length, movieResults.size());
     }

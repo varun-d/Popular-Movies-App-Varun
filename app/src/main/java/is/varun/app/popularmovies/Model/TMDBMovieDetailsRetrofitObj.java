@@ -32,7 +32,7 @@ public class TMDBMovieDetailsRetrofitObj {
         // To know how many reviews we have got!
         public String total_results;
 
-        public List<ReviewResults> results;
+        public ArrayList<ReviewResults> results;
 
         public class ReviewResults{
 
