@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="action_settings">Settings</string>
+    <string name="action_imdb">IMDB Page</string>
     <string name="tmdb_apikey">bb2676cea1c31da46a38029b13b86eaf</string>
 
     <!-- TODO: Movie Detail Fragment Strings -->

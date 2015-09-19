@@ -1,6 +1,8 @@
 package is.varun.app.popularmovies;
 
 import android.app.ActionBar;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,6 +10,8 @@ import android.view.MenuItem;
 
 
 public class MovieDetailActivity extends ActionBarActivity implements MovieDetailActivityFragment.OnFragmentInteractionListener {
+
+    String mimdbLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,11 @@ public class MovieDetailActivity extends ActionBarActivity implements MovieDetai
             return true;
         }
 
+        // TODO: 9/20/15 Pull out IMDB link through Fragment Listener and put it here
+        if (id == R.id.action_imdb) {
+            startActivity(new Intent( Intent.ACTION_VIEW, Uri.parse("http://www.imdb.com/title/" + mimdbLink)));
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -44,6 +53,11 @@ public class MovieDetailActivity extends ActionBarActivity implements MovieDetai
             getSupportActionBar().setTitle(title);
             getSupportActionBar().setSubtitle(subtitle);
         }
+    }
+
+    @Override
+    public void setIMDBLink(String link) {
+        mimdbLink = link;
     }
 
 }

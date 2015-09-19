@@ -117,11 +117,14 @@ public class MovieDetailActivityFragment extends Fragment {
 
         } else { movieReview.setText( mMovie.getMovieReviews().get(0) ); }
 
+        mListener.setIMDBLink( mMovie.getMovieIMDBLink() );
+
 
         return rootView;
     }
 
     public interface OnFragmentInteractionListener {
         void setActionBarTitleSub(String title, String subtitle);
+        void setIMDBLink(String link);
     }
 }
