@@ -1,5 +1,6 @@
 package is.varun.app.popularmovies;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -169,6 +170,16 @@ public class MoviePosterFragment extends Fragment {
 
     private class FetchMovieTask extends AsyncTask<String, Integer, TMDBMovie[]> {
 
+        private ProgressDialog pdia;
+
+        protected void onPreExecute(){
+            super.onPreExecute();
+            pdia = new ProgressDialog(MoviePosterFragment.this.getActivity());
+            pdia.setMessage("Loading movies...");
+            pdia.show();
+        }
+
+
         protected TMDBMovie[] doInBackground(String... sParams) {
 
             TMDBApiRetrofit TMDBservice;
@@ -227,6 +238,7 @@ public class MoviePosterFragment extends Fragment {
                 for (int i = 0; i < movieResults.size(); i++) {
 
                     ArrayList<String> _tempReviewArray = new ArrayList<>();
+                    ArrayList<String> _tempTrailerArray = new ArrayList<>();
 
                     TMDBMovieListRetrofitObj.MovieResult res = movieResults.get(i);
 
@@ -234,6 +246,7 @@ public class MoviePosterFragment extends Fragment {
 
                     // This shit is mental...
                     ArrayList<TMDBMovieDetailsRetrofitObj.Reviews.ReviewResults> movieReviews = dataMovieDetails.reviews.results;
+                    ArrayList<TMDBMovieDetailsRetrofitObj.Trailers.YouTubeResults> movieTrailers = dataMovieDetails.trailers.youtube;
 
                     myMovies[i] = new TMDBMovie(res.id);
                     myMovies[i].setMovieTitle(res.original_title);
@@ -253,6 +266,13 @@ public class MoviePosterFragment extends Fragment {
                         myMovies[i].setMovieReviews(_tempReviewArray);
                     }
 
+                    if (movieTrailers.size() >= 1) {
+                        for (int j = 0; j < movieTrailers.size(); j++) {
+                            if (movieTrailers.get(j).source != null) { _tempReviewArray.add(j, movieTrailers.get(j).source); }
+                        }
+                        myMovies[i].setMovieReviews(_tempTrailerArray);
+                    }
+
                 }
 
             } catch (Exception e){
@@ -264,6 +284,10 @@ public class MoviePosterFragment extends Fragment {
 
 
         protected void onPostExecute(TMDBMovie[] movieArray) {
+
+            if (pdia.isShowing()){
+                pdia.dismiss();
+            }
 
             // If we receive some stuff in movieArray. Future: What happens on else?
             if (movieArray != null) {

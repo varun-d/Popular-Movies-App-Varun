@@ -86,8 +86,6 @@ public class TMDB_API_Test  extends ApplicationTestCase<Application> {
     // TEST 1: Calls to each ID is done within the main loop itself.
     public void testMakeTMDBObject() throws Exception {
 
-        // // TODO: 9/13/15 Add the second call!
-
         Log.d(LOG_TAG, "testMakeTMDBMovieObject");
 
         // This is called once to populate the initial data, i.e. posters.
@@ -104,16 +102,18 @@ public class TMDB_API_Test  extends ApplicationTestCase<Application> {
         for (int i = 0; i < movieResults.size(); i++) {
 
             ArrayList<String> _tempReviewArray = new ArrayList<>();
+            ArrayList<String> _tempTrailerArray = new ArrayList<>();
 
             TMDBMovieListRetrofitObj.MovieResult res = movieResults.get(i);
 
             myMovies[i] = new TMDBMovie ( res.id );
 
-            // Get details for each movie id! This is done within a loop in TEST 1
+            // Get details for each movie id! This is done within this loop
             TMDBMovieDetailsRetrofitObj dataMovieDetails = TMDBservice.getMovieDetails(res.id, "bb2676cea1c31da46a38029b13b86eaf", "reviews,trailers");
 
             // This shit is mental...
             ArrayList<TMDBMovieDetailsRetrofitObj.Reviews.ReviewResults> movieReviews = dataMovieDetails.reviews.results;
+            ArrayList<TMDBMovieDetailsRetrofitObj.Trailers.YouTubeResults> movieTrailers = dataMovieDetails.trailers.youtube;
 
 
             myMovies[i].setMovieTitle(res.original_title);
@@ -123,17 +123,22 @@ public class TMDB_API_Test  extends ApplicationTestCase<Application> {
             myMovies[i].setMoviePop(res.popularity);
             myMovies[i].setMoviePosterURI(res.poster_path);
 
+            myMovies[i].setMovieIMDBLink(dataMovieDetails.imdb_id);
+
+
             if (movieReviews.size() >= 1) {
                 for (int j = 0; j < movieReviews.size(); j++) {
                     if (movieReviews.get(j).content != null) { _tempReviewArray.add(j, movieReviews.get(j).content); }
-
                 }
                 myMovies[i].setMovieReviews(_tempReviewArray);
             }
 
-            myMovies[i].setMovieIMDBLink(dataMovieDetails.imdb_id);
-
-
+            if (movieTrailers.size() >= 1) {
+                for (int j = 0; j < movieTrailers.size(); j++) {
+                    if (movieTrailers.get(j).source != null) { _tempReviewArray.add(j, movieTrailers.get(j).source); }
+                }
+                myMovies[i].setMovieReviews(_tempTrailerArray);
+            }
 
             myMovies[i].debugMovieInfo();
 

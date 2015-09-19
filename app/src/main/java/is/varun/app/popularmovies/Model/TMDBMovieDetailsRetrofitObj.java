@@ -55,7 +55,7 @@ public class TMDBMovieDetailsRetrofitObj {
 
         public Trailers() { trailers = new Trailers(); }
 
-        public List<YouTubeResults> youtube;
+        public ArrayList<YouTubeResults> youtube;
 
         public class YouTubeResults{
 

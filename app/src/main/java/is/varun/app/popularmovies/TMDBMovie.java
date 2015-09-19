@@ -74,12 +74,12 @@ public class TMDBMovie implements Parcelable {
     public String getMovieReleaseDate () { return movieReleaseDate; }
 
     // Movie Vote
-    public void setMovieVote (String newMovieVote) { movieVote = newMovieVote.isEmpty() ? "0/10" : newMovieVote; }
+    public void setMovieVote (String newMovieVote) { movieVote = newMovieVote.isEmpty() ? "10/10" : newMovieVote; }
 
     public String getMovieVote () { return movieVote; }
 
     // Movie Popularity
-    public void setMoviePop (String newMoviePop) { moviePop = newMoviePop.isEmpty() ? "0/100" : newMoviePop; }
+    public void setMoviePop (String newMoviePop) { moviePop = newMoviePop.isEmpty() ? "100/100" : newMoviePop; }
 
     public String getMoviePop () { return moviePop; }
 
@@ -192,12 +192,14 @@ public class TMDBMovie implements Parcelable {
      */
     public void debugMovieInfo ()
     {
-        Log.v(LOG_TAG, movieTitle);
-        Log.v(LOG_TAG, movieID);
-        Log.v(LOG_TAG, movieOverview);
-        Log.v(LOG_TAG, movieVote);
-        Log.v(LOG_TAG, movieReleaseDate);
-        Log.v(LOG_TAG, moviePosterURI);
-        Log.v(LOG_TAG, moviePop);
+        Log.v("Debug Title: ", movieTitle);
+        Log.v("Debug ID: ", movieID);
+        Log.v("Debug Overview: ", movieOverview);
+        Log.v("Debug Vote: ", movieVote);
+        Log.v("Debug Release: ", movieReleaseDate);
+        Log.v("Debug Poster URI: ", moviePosterURI);
+        Log.v("Debug Popularity: ", moviePop);
+        Log.v("Debug # of Reviews: ", Integer.toString(movieReviews.size()) );
+        Log.v("Debug # of Trailers: ", Integer.toString(movieTrailers.size()) );
     }
 }
