@@ -73,6 +73,9 @@ public class TMDBMovie implements Parcelable {
 
     public String getMovieReleaseDate () { return movieReleaseDate; }
 
+    public String getMovieReleaseYear () { return "Release: " + movieReleaseDate.substring(0, Math.min(movieReleaseDate.length(), 4) );
+    }
+
     // Movie Vote
     public void setMovieVote (String newMovieVote) { movieVote = newMovieVote.isEmpty() ? "10/10" : newMovieVote; }
 
@@ -93,7 +96,7 @@ public class TMDBMovie implements Parcelable {
     // Movie Runtime
     public void setMovieRuntime (String _var) { movieRuntime = _var; }
 
-    public String getMovieRuntime () { return movieRuntime; }
+    public String getMovieRuntime () { return movieRuntime + " m"; }
 
     // Movie Tagline
     public void setMovieTagline (String _var) { movieTagline = _var; }
@@ -121,6 +124,9 @@ public class TMDBMovie implements Parcelable {
     public int getMovieTrailerNum () { return movieTrailerNum; }
 
     public void setMovieTrailers (ArrayList<String> args) { movieTrailers.addAll(args); }
+
+    public ArrayList<String> getMovieTrailers () {return movieTrailers;}
+
 
 
 

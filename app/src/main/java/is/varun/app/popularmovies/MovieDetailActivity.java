@@ -1,12 +1,13 @@
 package is.varun.app.popularmovies;
 
+import android.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MovieDetailActivity extends ActionBarActivity {
+public class MovieDetailActivity extends ActionBarActivity implements MovieDetailActivityFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,14 @@ public class MovieDetailActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setActionBarTitleSub(String title, String subtitle) {
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setTitle(title);
+            getSupportActionBar().setSubtitle(subtitle);
+        }
     }
 
 }

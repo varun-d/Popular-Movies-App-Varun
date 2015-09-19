@@ -257,6 +257,8 @@ public class MoviePosterFragment extends Fragment {
                     myMovies[i].setMoviePosterURI(res.poster_path);
 
                     myMovies[i].setMovieIMDBLink(dataMovieDetails.imdb_id);
+                    myMovies[i].setMovieRuntime(dataMovieDetails.runtime);
+                    myMovies[i].setMovieTagline(dataMovieDetails.tagline);
 
                     if (movieReviews.size() >= 1) {
                         for (int j = 0; j < movieReviews.size(); j++) {
@@ -268,9 +270,9 @@ public class MoviePosterFragment extends Fragment {
 
                     if (movieTrailers.size() >= 1) {
                         for (int j = 0; j < movieTrailers.size(); j++) {
-                            if (movieTrailers.get(j).source != null) { _tempReviewArray.add(j, movieTrailers.get(j).source); }
+                            if (movieTrailers.get(j).source != null) { _tempTrailerArray.add(j, movieTrailers.get(j).source); }
                         }
-                        myMovies[i].setMovieReviews(_tempTrailerArray);
+                        myMovies[i].setMovieTrailers(_tempTrailerArray);
                     }
 
                 }

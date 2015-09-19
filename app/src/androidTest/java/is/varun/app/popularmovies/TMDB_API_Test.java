@@ -124,6 +124,8 @@ public class TMDB_API_Test  extends ApplicationTestCase<Application> {
             myMovies[i].setMoviePosterURI(res.poster_path);
 
             myMovies[i].setMovieIMDBLink(dataMovieDetails.imdb_id);
+            myMovies[i].setMovieTagline(dataMovieDetails.tagline);
+            myMovies[i].setMovieRuntime(dataMovieDetails.runtime);
 
 
             if (movieReviews.size() >= 1) {

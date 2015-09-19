@@ -1,7 +1,12 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context="is.varun.app.popularmovies.MovieDetailActivityFragment"
     android:orientation="vertical">
 
@@ -51,13 +56,13 @@
                 android:layout_marginBottom="8dp"
                 android:textSize="@dimen/abc_text_size_medium_material"/>
 
-            <!--<TextView
+            <TextView
                 android:id="@+id/movie_runtime"
                 android:text="@string/movie_runtime_sample"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:textSize="@dimen/abc_text_size_medium_material"/>-->
+                android:layout_marginBottom="8dp"
+                android:textSize="@dimen/abc_text_size_medium_material"/>
 
             <TextView
                 android:id="@+id/movie_rating"
@@ -65,7 +70,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/sec_default"
+                android:layout_marginBottom="8dp"
                 android:textSize="@dimen/abc_text_size_display_2_material"/>
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/movie_trailer"
+                android:id="@+id/button" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/movie_add_toFav"
+                android:id="@+id/fav_checkBox" />
 
         </LinearLayout>
 
@@ -75,13 +94,28 @@
         android:id="@+id/movie_desc"
         android:text="@string/movie_overview_sample"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:layout_weight="2"
-        android:textSize="@dimen/abc_text_size_subhead_material"
-        android:scrollHorizontally="true"
-        android:ellipsize="end"
-        android:maxLines="7"/>
+        android:textSize="@dimen/abc_text_size_body_1_material" />
+
+    <TextView
+        android:text="@string/movie_reivew_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_weight="2"
+        android:textSize="@dimen/abc_text_size_title_material"
+        android:id="@+id/review_title"/>
+
+    <TextView
+        android:id="@+id/movie_review"
+        android:text="@string/movie_overview_sample"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        android:layout_weight="2"
+        android:textSize="@dimen/abc_text_size_body_1_material" />
 
 </LinearLayout>
+</ScrollView>

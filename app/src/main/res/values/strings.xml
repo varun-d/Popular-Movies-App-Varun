@@ -17,4 +17,9 @@
     <string name="movie_id_sample">1234</string>
     <string name="movie_pop_sample">55.55</string>
 
+    <string name="movie_trailer">Watch Trailer</string>
+    <string name="movie_reivew_sample">This is a test review which may be multiple lines. This review will also duplicate into multiple ones based on how many reviews are present</string>
+
+    <string name="movie_add_toFav">Add to Favorites</string>
+    <string name="movie_reivew_title">Review:</string>
 </resources>

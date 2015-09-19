@@ -14,6 +14,10 @@ I have tried to comment everyline of code for easy understanding of the process.
 2. OnClick of each poster takes you to the detail page
 
 # Things it needs to do for stage 2:
+[Implementation Guide here](https://docs.google.com/document/d/1ZlN1fUsCSKuInLECcJkslIqvpKlP7jWL2TP9m6UiA6I/pub?embedded=true#h.7sxo8jefdfll)
+
+[Check Ruberic here](https://docs.google.com/document/d/11JDnp_WTNGcIm_gs1raroUuDyxo9H_WsQxnpeozMov4/pub?embedded=true)
+
 
 ## UI
 
@@ -58,13 +62,8 @@ Array movieReviews
 
 # Workbreakdown
 
-1. Research /videos and /reviews content
-    Done. Note that sometimes videos or reviews will be missing. Or Videos may have multiple trailers. In any case we keep this simple, with one video link. This info will be pulled in using one API call by append_to_response param.
 2. Plan out rough wireframe on what content would be shown
-3. Modify TMDBMovie Object to reflect videos and reviews and favorited.
-4. Research Retrofit Lib / REST Library to build the TMDBMovie Object efficiently
-5. Modify current JSON parsing to use retrofit
-6. Modify FetchMoviesTask to also request /video and /reviews
+
 7. Decouple FetchMoviesTask from the fragmet file
 
 # Topics covered
