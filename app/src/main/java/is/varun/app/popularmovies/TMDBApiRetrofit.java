@@ -13,8 +13,6 @@ import retrofit.http.Query;
  * @author Varun D
  */
 
-// TODO Modify this to match TMDBMovies after modifying TMDBMovie!
-
 public interface TMDBApiRetrofit {
 
     /** This HTTP URI gets a list of at least 20 movies as provided by default TMDB pagination

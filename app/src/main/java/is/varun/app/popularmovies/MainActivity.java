@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/* TODO: 9/23/15 Add "Favorites" option in the sort menu. This means we need to create a new property within the TMDBMovie object!!  */
 
 public class MainActivity extends ActionBarActivity {
 
@@ -30,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //If the option, action_settings is clicked, start new activity, SettingsActivity
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         }

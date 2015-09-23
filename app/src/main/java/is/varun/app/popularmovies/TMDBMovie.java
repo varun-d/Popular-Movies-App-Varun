@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// TODO: 9/23/15 Add isFavorite boolien thingy. with setFavorite, boolien variable movieIsFav
 /**
  * A class to store movie data. This is a general Parcelable holder for more than just the
  * name, release date, etc.
@@ -43,14 +44,15 @@ public class TMDBMovie implements Parcelable {
     private ArrayList<String> movieReviews = new ArrayList<>();
     private int movieTrailerNum;
     private ArrayList<String> movieTrailers = new ArrayList<>();
+    private int movieFavorite = 0;
 
     // Constructor
-    public TMDBMovie(String newID) { setMovieID(newID); }
+    public TMDBMovie(String newID) { setMovieID( newID ); }
 
     // Movie ID
     public void setMovieID (String newID) { movieID = newID; }
 
-    public Long getMovieID () { return Long.valueOf( movieID ); }
+    public String getMovieID () { return  movieID; }
 
     // Movie Title
     public void setMovieTitle (String newTitle) { movieTitle = newTitle.isEmpty() ? "(Untitled)" : newTitle; }
@@ -127,6 +129,10 @@ public class TMDBMovie implements Parcelable {
 
     public ArrayList<String> getMovieTrailers () {return movieTrailers;}
 
+    public void setMovieFavoriteAs (int x) { movieFavorite = x ; }
+
+    public int isMovieFavorite () { return movieFavorite; }
+
 
 
 
@@ -162,6 +168,7 @@ public class TMDBMovie implements Parcelable {
         dest.writeInt(movieTrailerNum);
         dest.writeStringList(movieReviews);
         dest.writeStringList(movieTrailers);
+        dest.writeInt(movieFavorite);
     }
 
     private TMDBMovie(Parcel in) {
@@ -179,6 +186,7 @@ public class TMDBMovie implements Parcelable {
         movieTrailerNum = in.readInt();
         in.readStringList(movieReviews);
         in.readStringList(movieTrailers);
+        movieFavorite = in.readInt();
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

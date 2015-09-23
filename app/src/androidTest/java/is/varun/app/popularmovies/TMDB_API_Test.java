@@ -37,8 +37,6 @@ public class TMDB_API_Test  extends ApplicationTestCase<Application> {
 //        TMDBMovieListRetrofitObj movies = TMDBservice.getMovies("bb2676cea1c31da46a38029b13b86eaf","popularity.desc");
 //
 //        /**
-//         *  TODO // Need to supply this into a local ArrayList of TMDBMovie because that object
-//         *  TODO // will also hold the reviews and stuff
 //         */
 //        Log.d(TEST_LOG, movies.page);
 //        Log.d(TEST_LOG, Integer.toString(movies.results.size()));

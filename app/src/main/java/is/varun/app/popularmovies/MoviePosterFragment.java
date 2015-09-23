@@ -29,18 +29,18 @@ import retrofit.RestAdapter;
  * in a GridView using Glide. The fetching and creation of TMDBMovie object is done in
  * doInBackground.
  *
- * Addition of fetched movies is done on onPostExecute
+ * Addition of fetched movies to the Adapter is done on onPostExecute
  *
  * This project was used to solidify my understanding of the powerful BaseAdapter!
  * Extending BaseAdapter is the sexiest thing I have learnt!
  *
  * @author Varun D
- * @version 1.0
+ * @version 2.0
  */
 
 public class MoviePosterFragment extends Fragment {
 
-    // SER_KEY is used to deserialize the Bundle sent onItemClick
+    // SER_KEY is used to deserialize the Bundle sent through onItemClick
     public final static String SER_KEY = "is.varun.app.popularmovies.SER_KEY";
 
     // LOG_TAG used for logging
@@ -58,7 +58,7 @@ public class MoviePosterFragment extends Fragment {
     // getMoviesNow AsyncTast to fetch all movies and .addMovies onPostExecute
     FetchMovieTask getMoviesAsyncTask = new FetchMovieTask();
 
-    // Lonely empty constructor. I could write a whole novel about this guy (or not)
+    // Lonely empty constructor. I could write a whole novel about this one (or not)
     public MoviePosterFragment() {
     }
 
@@ -75,7 +75,6 @@ public class MoviePosterFragment extends Fragment {
         GridView poster_gv = (GridView) rootView.findViewById(R.id.poster_gridview);
 
         // Set number of columns dynamically based on pixel density!
-        // TODO: This *may* change for tablet view
         poster_gv.setNumColumns(calculatedColumns(thisContext));
 
         // Init the mMovieAdapter with the newMovieAdapter
@@ -161,7 +160,7 @@ public class MoviePosterFragment extends Fragment {
         // Declare SharedPreferences prefs and init with getDefaultSharedPreferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
-        // Get user's sort preference string which is either 1 or 0
+        // Get user's sort preference string which is either 0,1 or 2
         String pref_sort_opt = prefs.getString("pref_sort_by", "");
 
         // Use the adapters sortMovies method to sort our movies accordingly. w00t!
@@ -170,8 +169,10 @@ public class MoviePosterFragment extends Fragment {
 
     private class FetchMovieTask extends AsyncTask<String, Integer, TMDBMovie[]> {
 
+        // Declare a ProgressDialog private class variable
         private ProgressDialog pdia;
 
+        // OnPreExecute Init the progressDialog and show it till doInBackground runs its course
         protected void onPreExecute(){
             super.onPreExecute();
             pdia = new ProgressDialog(MoviePosterFragment.this.getActivity());
@@ -179,11 +180,20 @@ public class MoviePosterFragment extends Fragment {
             pdia.show();
         }
 
-
+        /**
+         * This version runs both calls in the parent activity.
+         * @param sParams
+         * @return
+         */
         protected TMDBMovie[] doInBackground(String... sParams) {
 
+            // Declare the Retrofit service
             TMDBApiRetrofit TMDBservice;
+
+            // Declare recieved object here
             TMDBMovieListRetrofitObj movieReplyObject;
+
+            // Declrate and init an empty TMDBMovie object array
             TMDBMovie[] myMovies = null;
 
 //            try {
@@ -287,11 +297,12 @@ public class MoviePosterFragment extends Fragment {
 
         protected void onPostExecute(TMDBMovie[] movieArray) {
 
+            // Dismiss the loading dialog if it's still showing
             if (pdia.isShowing()){
                 pdia.dismiss();
             }
 
-            // If we receive some stuff in movieArray. Future: What happens on else?
+            // If we receive some stuff in movieArray else show network error message!
             if (movieArray != null) {
 
                 // Call the addMovies function to send over our array of TMDBMovie list to the Adapter

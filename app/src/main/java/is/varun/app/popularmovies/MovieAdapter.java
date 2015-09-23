@@ -59,7 +59,7 @@ public class MovieAdapter extends BaseAdapter {
     // getItemId gets the item id at the position. Uses the getID() function of our custom TMDB object :)
     @Override
     public long getItemId(int position) {
-        return myMoviesList.get(position).getMovieID();
+        return Long.parseLong(myMoviesList.get(position).getMovieID());
     }
 
     /**
@@ -90,6 +90,8 @@ public class MovieAdapter extends BaseAdapter {
     }
 
     /**
+     * todo customize sort function to include only favorite movies...
+     * todo if sort_by.equals("2"): show only .isFavorite (bool)
      * A custom sort function to sort Movies in the myMoviesList.
      * This method also notifies of data changes
      *
@@ -135,6 +137,8 @@ public class MovieAdapter extends BaseAdapter {
     public ArrayList<TMDBMovie> getMyMoviesList(){
         return myMoviesList;
     }
+
+    // TODO: 9/23/15 Add ViewHolder usage pattern 
 
     public View getView(int position, View convertView, ViewGroup parent) {
         // Not an ideal way to show poster images

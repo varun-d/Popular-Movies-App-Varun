@@ -1,6 +1,5 @@
 package is.varun.app.popularmovies;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
@@ -8,6 +7,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * The activity implements an interaction listener to transfer data back to the Activity
+ */
 
 public class MovieDetailActivity extends ActionBarActivity implements MovieDetailActivityFragment.OnFragmentInteractionListener {
 
@@ -32,14 +34,9 @@ public class MovieDetailActivity extends ActionBarActivity implements MovieDetai
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        // TODO: CLEANUP 9/23/15 The toolbar back button from detail view SHOULD do a normal back, not reload!
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        // TODO: 9/20/15 Pull out IMDB link through Fragment Listener and put it here
         if (id == R.id.action_imdb) {
             startActivity(new Intent( Intent.ACTION_VIEW, Uri.parse("http://www.imdb.com/title/" + mimdbLink)));
         }

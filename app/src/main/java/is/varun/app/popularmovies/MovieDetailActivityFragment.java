@@ -4,25 +4,40 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import org.w3c.dom.Text;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
  * Detail activity fragment
  */
 public class MovieDetailActivityFragment extends Fragment {
+
+    private static String FAV_KEY = "FavMovies";
+
+    String demoIDs[] = {"2323", "2232","3210","3260"};
+
+    Set<String> movieIDSet;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -45,6 +60,9 @@ public class MovieDetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+
         // Receive the intent.
         Intent intent = getActivity().getIntent();
         Context mContext = rootView.getContext();
@@ -56,9 +74,7 @@ public class MovieDetailActivityFragment extends Fragment {
         TextView movieTitleView = (TextView) rootView.findViewById( R.id.movie_title);
         movieTitleView.setText(mMovie.getMovieTitle());
 
-        if (mListener != null) {
-            mListener.setActionBarTitleSub(mMovie.getMovieTitle(), mMovie.getMovieTagline());
-        }
+        mListener.setActionBarTitleSub(mMovie.getMovieTitle(), mMovie.getMovieTagline());
 
         // Release year
         TextView movieRelDateView = (TextView) rootView.findViewById( R.id.movie_year );
@@ -88,6 +104,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
         Button trailer_btn = (Button) rootView.findViewById(R.id.button);
 
+        // Trailer button
         if (mMovie.getMovieTrailers().isEmpty()){
 
             // Remove the button if trailers do not exist
@@ -97,6 +114,8 @@ public class MovieDetailActivityFragment extends Fragment {
 
             // Else keep the button and apply onClick -> Intent thingy
             trailer_btn.setOnClickListener( new View.OnClickListener() {
+
+                @Override
                 public void onClick(View v) {
                     startActivity(new Intent(
                             Intent.ACTION_VIEW,
@@ -105,6 +124,42 @@ public class MovieDetailActivityFragment extends Fragment {
             });
 
         }
+
+        // This section adds movie to favorite
+        final CheckBox checkBox = (CheckBox) rootView.findViewById(R.id.fav_checkBox);
+
+        movieIDSet =  prefs.getStringSet(FAV_KEY, new HashSet<String>());
+
+            if (movieIDSet.contains(mMovie.getMovieID()) ) {
+                checkBox.setChecked(true);
+                checkBox.setText("Favorite");
+            }
+
+        checkBox.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences.Editor editSharedPref = prefs.edit();
+                // Is the checkbox checked?
+                if ( ((CheckBox) v).isChecked() ) {
+                    movieIDSet.add( mMovie.getMovieID() );
+                    editSharedPref.putStringSet(FAV_KEY, movieIDSet);
+                    editSharedPref.commit();
+                    checkBox.setText("Favorite");
+
+                } else {
+                    movieIDSet.remove( mMovie.getMovieID() );
+                    editSharedPref.putStringSet( FAV_KEY, movieIDSet );
+                    editSharedPref.commit();
+                    checkBox.setText("Add to Favorites");
+                }
+
+
+            }
+        });
+
+
 
         TextView movieReview = (TextView) rootView.findViewById( R.id.movie_review );
         TextView movieReviewTitle = (TextView) rootView.findViewById( R.id.review_title );
@@ -118,7 +173,6 @@ public class MovieDetailActivityFragment extends Fragment {
         } else { movieReview.setText( mMovie.getMovieReviews().get(0) ); }
 
         mListener.setIMDBLink( mMovie.getMovieIMDBLink() );
-
 
         return rootView;
     }
