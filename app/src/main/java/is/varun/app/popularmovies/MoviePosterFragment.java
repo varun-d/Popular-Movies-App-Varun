@@ -164,7 +164,7 @@ public class MoviePosterFragment extends Fragment {
         String pref_sort_opt = prefs.getString("pref_sort_by", "");
 
         // Use the adapters sortMovies method to sort our movies accordingly. w00t!
-        mMovieAdapter.sortMovies(pref_sort_opt);
+        mMovieAdapter.sortMovies(pref_sort_opt, prefs );
     }
 
     private class FetchMovieTask extends AsyncTask<String, Integer, TMDBMovie[]> {

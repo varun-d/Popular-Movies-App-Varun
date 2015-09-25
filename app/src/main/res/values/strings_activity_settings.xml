@@ -20,10 +20,12 @@
     <string-array name="pref_sort_by_options">
         <item>Popularity</item>
         <item>Votes</item>
+        <item>Favorites</item>
     </string-array>
     <string-array name="pref_sort_by_values">
         <item>1</item>
         <item>0</item>
+        <item>2</item>
     </string-array>
 
     <!-- Example settings for Data & Sync -->

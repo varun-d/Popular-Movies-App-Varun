@@ -3,6 +3,7 @@ package is.varun.app.popularmovies;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,10 +11,14 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by Varun on 7/17/15.
@@ -23,7 +28,8 @@ import java.util.Comparator;
 
 public class MovieAdapter extends BaseAdapter {
 
-    // Declare a new myMoviesList ArrayList of object type TMDBMovie
+    // Declare a new displayList and favMoviesList ArrayList of object type TMDBMovie
+    ArrayList<TMDBMovie> displayList;
     ArrayList<TMDBMovie> myMoviesList;
 
     // Declare a Context private member variable mContext. Not init'ed with any value
@@ -31,7 +37,7 @@ public class MovieAdapter extends BaseAdapter {
 
     /**
      * MovieAdapter constructor
-     * Initialize the myMoviesList ArrayList that will contain the movie data
+     * Initialize the displayList ArrayList that will contain the movie data
      * assign mContext
      */
     public MovieAdapter(Context c) {
@@ -39,38 +45,41 @@ public class MovieAdapter extends BaseAdapter {
         // Init mContext by consuming c
         mContext = c;
 
-        // Init myMoviesList new ArrayList within the constructor. Empty.
+        // Init displayList new ArrayList within the constructor. Empty.
+        displayList = new ArrayList<>();
         myMoviesList = new ArrayList<>();
 
     }
 
-    // getCount gets the size of myMoviesList
+    // getCount gets the size of displayList
     @Override
     public int getCount() {
-        return myMoviesList.size();
+        return displayList.size();
     }
 
-    // getItem gets the item at position (int) from myMoviesList
+    // getItem gets the item at position (int) from displayList
     @Override
     public TMDBMovie getItem(int position) {
-        return myMoviesList.get(position);
+        return displayList.get(position);
     }
 
     // getItemId gets the item id at the position. Uses the getID() function of our custom TMDB object :)
     @Override
     public long getItemId(int position) {
-        return Long.parseLong(myMoviesList.get(position).getMovieID());
+        return Long.parseLong(displayList.get(position).getMovieID());
     }
 
     /**
-     * A custom Add function to add Movies to the myMoviesList. This method also notifies of data changes!
+     * A custom Add function to add Movies to the displayList. This method also notifies of data changes!
      *
      * @param newMovies the list of movies to add
      */
     public void addMovies(ArrayList<TMDBMovie> newMovies) {
 
-        // Add all the recently fetched movies to our myMoviesList arraylist
+        // Add all the recently fetched movies to our myMoviesList and myMovieList
         myMoviesList.addAll(newMovies);
+
+        displayList = myMoviesList;
 
         /** After adding in the movies we sort the movies according to user's prefs
          * even though movies are sorted by popularity by default.
@@ -83,7 +92,7 @@ public class MovieAdapter extends BaseAdapter {
         String pref_sort_opt = prefs.getString("pref_sort_by", "");
 
         // Sort according to the pref
-        this.sortMovies(pref_sort_opt);
+        this.sortMovies(pref_sort_opt, prefs);
 
         // Inform the adapter our data has changed
         this.notifyDataSetChanged();
@@ -92,18 +101,20 @@ public class MovieAdapter extends BaseAdapter {
     /**
      * todo customize sort function to include only favorite movies...
      * todo if sort_by.equals("2"): show only .isFavorite (bool)
-     * A custom sort function to sort Movies in the myMoviesList.
+     * A custom sort function to sort Movies in the displayList.
      * This method also notifies of data changes
      *
      * Note: Uses Comparator on BigDecimal. Need to import java.math.BigDecimal
      *
      * @param sort_by should be either "1" for popular or "0" for vote
      */
-    public void sortMovies(String sort_by) {
+    public void sortMovies(String sort_by, SharedPreferences p) {
 
         // If equals 1, sort by Popularity
         if (sort_by.equals("1")) {
-            Collections.sort(myMoviesList, new Comparator<TMDBMovie>() {
+            // Reset displayList in case it has changed and sort it.
+            displayList = myMoviesList;
+            Collections.sort(displayList, new Comparator<TMDBMovie>() {
                 @Override
                 public int compare(TMDBMovie m1, TMDBMovie m2) {
                     BigDecimal bg1, bg2;
@@ -116,7 +127,9 @@ public class MovieAdapter extends BaseAdapter {
         }
         // If equals 0, sort by Vote
         if (sort_by.equals("0")) {
-            Collections.sort(myMoviesList, new Comparator<TMDBMovie>() {
+            // Reset displayList in case it has changed and sort it.
+            displayList = myMoviesList;
+            Collections.sort(displayList, new Comparator<TMDBMovie>() {
                 @Override
                 public int compare(TMDBMovie m1, TMDBMovie m2) {
                     BigDecimal bg1, bg2;
@@ -127,16 +140,45 @@ public class MovieAdapter extends BaseAdapter {
             });
             this.notifyDataSetChanged();
         }
+
+        if (sort_by.equals("2")) {
+
+            displayList = getMyFavoriteMovies (myMoviesList, p);
+            this.notifyDataSetChanged();
+        }
     }
 
     /**
-     * Returns the myMoviesList object
+     * Returns the displayList object
      *
      * @return an ArrayList of TMDBMovies object
      */
     public ArrayList<TMDBMovie> getMyMoviesList(){
-        return myMoviesList;
+        return displayList;
     }
+
+    /**
+     * Get favorite movies from the shared preferences and update the list of movies.
+     * NOTE: This will result with an error if a favorite movie ID was not within the original list!
+     * @param listToEdit is the list to be modified!
+     * @param prefs is the SharedPref library
+     * @return modified list containing only favorite movies
+     */
+    public ArrayList<TMDBMovie> getMyFavoriteMovies( ArrayList<TMDBMovie> listToEdit, SharedPreferences prefs ){
+        // Declare and init favMovies with pref.getStringSet
+        Set<String> favMovies =  prefs.getStringSet("FavMovies", new HashSet<String>());
+
+        // Create a temporary resultArray
+        ArrayList<TMDBMovie> resultArray = new ArrayList<>();
+
+        // For each movie, if the id is within the favMovies set, then add it to the reusltArray
+        for (TMDBMovie movie :listToEdit ) { if (favMovies.contains( movie.getMovieID() )) resultArray.add(movie); }
+
+        // Return the result array to show the favorate movies
+        return resultArray;
+    }
+
+
 
     // TODO: 9/23/15 Add ViewHolder usage pattern 
 
@@ -170,8 +212,8 @@ public class MovieAdapter extends BaseAdapter {
 
         // This is for testing: imageView.setImageResource(mThumbIds[position]);
 
-        // Load image URL from the myMoviesList corresponding to the current position of the view
-        Glide.with(mContext).load(myMoviesList.get(position).getMoviePosterURL())
+        // Load image URL from the displayList corresponding to the current position of the view
+        Glide.with(mContext).load(displayList.get(position).getMoviePosterURL())
                 .centerCrop()
                 .override(185, 278)
                 .placeholder(R.drawable.placeholder)

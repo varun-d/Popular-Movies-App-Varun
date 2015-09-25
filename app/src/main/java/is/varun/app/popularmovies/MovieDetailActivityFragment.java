@@ -112,7 +112,7 @@ public class MovieDetailActivityFragment extends Fragment {
 
         } else {
 
-            // Else keep the button and apply onClick -> Intent thingy
+            // Else keep the button and apply onClick to open the first trailer
             trailer_btn.setOnClickListener( new View.OnClickListener() {
 
                 @Override
@@ -143,12 +143,14 @@ public class MovieDetailActivityFragment extends Fragment {
                 SharedPreferences.Editor editSharedPref = prefs.edit();
                 // Is the checkbox checked?
                 if ( ((CheckBox) v).isChecked() ) {
+                    mMovie.setMovieFavoriteAs(1);
                     movieIDSet.add( mMovie.getMovieID() );
                     editSharedPref.putStringSet(FAV_KEY, movieIDSet);
                     editSharedPref.commit();
                     checkBox.setText("Favorite");
 
                 } else {
+                    mMovie.setMovieFavoriteAs(0);
                     movieIDSet.remove( mMovie.getMovieID() );
                     editSharedPref.putStringSet( FAV_KEY, movieIDSet );
                     editSharedPref.commit();
