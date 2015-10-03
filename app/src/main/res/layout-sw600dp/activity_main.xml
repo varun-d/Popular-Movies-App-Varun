@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal"
+    android:orientation="horizontal"
+    tools:context="is.varun.app.popularmovies.MainActivity">
+
+    <!--
+    This layout is a two-pane layout for the Popular Movies master/detail flow.
+    -->
+    <fragment
+        android:id="@+id/id_movie_poster_fragment"
+        android:name="is.varun.app.popularmovies.MoviePosterFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_main" />
+
+    <FrameLayout
+        android:id="@+id/id_fragment_movie_detail"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+</LinearLayout>

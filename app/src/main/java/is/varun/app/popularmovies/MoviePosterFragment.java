@@ -1,5 +1,6 @@
 package is.varun.app.popularmovies;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,8 +60,21 @@ public class MoviePosterFragment extends Fragment {
     // getMoviesNow AsyncTast to fetch all movies and .addMovies onPostExecute
     FetchMovieTask getMoviesAsyncTask = new FetchMovieTask();
 
+    private MovieDetailActivityFragment.OnFragmentInteractionListener mListener;
+
     // Lonely empty constructor. I could write a whole novel about this one (or not)
     public MoviePosterFragment() {
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof MovieDetailActivityFragment.OnFragmentInteractionListener) {
+            mListener = (MovieDetailActivityFragment.OnFragmentInteractionListener) activity;
+        } else {
+            throw new ClassCastException(activity.toString()
+                    + " must implemenet MyListFragment.OnItemSelectedListener");
+        }
     }
 
     @Override
@@ -75,7 +90,7 @@ public class MoviePosterFragment extends Fragment {
         GridView poster_gv = (GridView) rootView.findViewById(R.id.poster_gridview);
 
         // Set number of columns dynamically based on pixel density!
-        poster_gv.setNumColumns(calculatedColumns(thisContext));
+        poster_gv.setNumColumns( calculatedColumns() );
 
         // Init the mMovieAdapter with the newMovieAdapter
         mMovieAdapter = new MovieAdapter(thisContext);
@@ -103,25 +118,9 @@ public class MoviePosterFragment extends Fragment {
                 // Get the TMDBMovie object for the item that was clicked
                 TMDBMovie clickedMovie = mMovieAdapter.getItem(position);
 
-                // Create a new Intent object with current activity context and MovieDetailActivity class
-                Intent movieDetailActivityintent = new Intent(getActivity(), MovieDetailActivity.class);
+                // Call the function that sends this data to the MainActivity
+                mListener.aMoviePosterClicked(clickedMovie);
 
-                // Create a bundle so we can send it off to the other activity/fragment
-                Bundle mBundle = new Bundle();
-
-                // Insert the Object in the mBundle through putSerializable
-                // Remember that for this to work TMDBMovie class has to implement Serializable
-                // and use private static final long serialVersionUID = 1337L;
-                mBundle.putParcelable(SER_KEY, clickedMovie);
-
-                // putExtras, add the mBundle to the new Intent
-                movieDetailActivityintent.putExtras(mBundle);
-
-                // Toast for testing needs. Remove from production
-                // Toast.makeText(thisContext, "TOAST: " + clickedMovie.getMovieTitle(), Toast.LENGTH_SHORT).show();
-
-                // Call method stratActivity with the just created Intent object
-                startActivity(movieDetailActivityintent);
             }
         });
 
@@ -130,13 +129,35 @@ public class MoviePosterFragment extends Fragment {
 
     /**
      * Temporary sexy method to calculate number of GridView columns dynamically
-     * @param c is our current application context
      * @return calculated number of columns
      */
-    private int calculatedColumns(Context c) {
-        float scalefactor = getResources().getDisplayMetrics().density * 100;
-        int number = c.getResources().getDisplayMetrics().widthPixels;
-        return (int) ((float) number / scalefactor);
+    private int calculatedColumns() {
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        int widthPixels = metrics.widthPixels;
+        int heightPixels = metrics.heightPixels;
+
+        float scaleFactor = metrics.density;
+
+        float widthDp = widthPixels / scaleFactor;
+        float heightDp = heightPixels / scaleFactor;
+
+        float smallestWidth = Math.min(widthDp, heightDp);
+
+        if (smallestWidth >= 600) {
+
+            // Use 3 columns for anything larger than sw-600
+            return 3;
+
+        } else {
+
+            // Calculate for other smaller sizes. That is, for even landscape!
+            return (int) ((float) smallestWidth / scaleFactor);
+        }
+
+
     }
 
     @Override

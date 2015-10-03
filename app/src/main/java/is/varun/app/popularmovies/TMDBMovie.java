@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// TODO: 9/23/15 Add isFavorite boolien thingy. with setFavorite, boolien variable movieIsFav
 /**
  * A class to store movie data. This is a general Parcelable holder for more than just the
  * name, release date, etc.

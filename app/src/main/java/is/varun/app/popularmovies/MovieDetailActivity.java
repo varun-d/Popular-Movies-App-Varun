@@ -1,5 +1,6 @@
 package is.varun.app.popularmovies;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
@@ -18,7 +19,14 @@ public class MovieDetailActivity extends ActionBarActivity implements MovieDetai
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_movie_detail);
+
+        if (savedInstanceState == null ){
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.id_fragment_movie_detail, new MovieDetailActivityFragment())
+                    .commit();
+        }
     }
 
 
@@ -34,7 +42,6 @@ public class MovieDetailActivity extends ActionBarActivity implements MovieDetai
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        // TODO: CLEANUP 9/23/15 The toolbar back button from detail view SHOULD do a normal back, not reload!
         int id = item.getItemId();
 
         if (id == R.id.action_imdb) {
@@ -56,5 +63,8 @@ public class MovieDetailActivity extends ActionBarActivity implements MovieDetai
     public void setIMDBLink(String link) {
         mimdbLink = link;
     }
+
+    @Override
+    public void aMoviePosterClicked (TMDBMovie clickedMovie) {}
 
 }

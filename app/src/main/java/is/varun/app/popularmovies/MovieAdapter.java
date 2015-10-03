@@ -99,8 +99,6 @@ public class MovieAdapter extends BaseAdapter {
     }
 
     /**
-     * todo customize sort function to include only favorite movies...
-     * todo if sort_by.equals("2"): show only .isFavorite (bool)
      * A custom sort function to sort Movies in the displayList.
      * This method also notifies of data changes
      *
@@ -177,10 +175,6 @@ public class MovieAdapter extends BaseAdapter {
         // Return the result array to show the favorate movies
         return resultArray;
     }
-
-
-
-    // TODO: 9/23/15 Add ViewHolder usage pattern 
 
     public View getView(int position, View convertView, ViewGroup parent) {
         // Not an ideal way to show poster images

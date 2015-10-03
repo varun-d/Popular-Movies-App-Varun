@@ -2,7 +2,6 @@
     android:layout_height="wrap_content"
     android:layout_width="wrap_content">
 
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,7 +20,7 @@
         android:background="@color/sec_default"
         android:padding="16dp"
         android:layout_marginBottom="16dp"
-        android:textSize="@dimen/abc_text_size_large_material"
+        android:textSize="@dimen/abc_text_size_headline_material"
         android:textColor="@color/abc_bluegrey"/>
 
     <LinearLayout
@@ -53,16 +52,16 @@
                 android:text="@string/movie_rel_sample"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textSize="@dimen/abc_text_size_medium_material"/>
+                android:layout_marginBottom="4dp"
+                android:textSize="@dimen/abc_text_size_small_material"/>
 
             <TextView
                 android:id="@+id/movie_runtime"
                 android:text="@string/movie_runtime_sample"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:textSize="@dimen/abc_text_size_medium_material"/>
+                android:layout_marginBottom="4dp"
+                android:textSize="@dimen/abc_text_size_small_material"/>
 
             <TextView
                 android:id="@+id/movie_rating"
