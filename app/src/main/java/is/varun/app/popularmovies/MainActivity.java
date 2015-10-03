@@ -11,6 +11,8 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity implements MovieDetailActivityFragment.OnFragmentInteractionListener  {
 
+    // TODO: 10/4/15 Show the first item as soon as data has finished loading for two panes
+
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
     String mimdbLink;

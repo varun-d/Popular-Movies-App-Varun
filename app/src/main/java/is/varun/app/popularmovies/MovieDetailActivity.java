@@ -23,8 +23,22 @@ public class MovieDetailActivity extends ActionBarActivity implements MovieDetai
         setContentView(R.layout.activity_movie_detail);
 
         if (savedInstanceState == null ){
+
+            // Create a new empty bundle
+            Bundle arguments = new Bundle();
+
+            // Get data from Intent and insert it into the arguments bundle! This is the exchange!
+            arguments.putParcelable(MoviePosterFragment.SER_KEY, getIntent().getParcelableExtra(MoviePosterFragment.SER_KEY));
+
+            // Declare and init the MovieDetailFragment
+            MovieDetailActivityFragment newFragment = new MovieDetailActivityFragment();
+
+            // Set the Arguments with our data
+            newFragment.setArguments(arguments);
+
+            // Begin transaction
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.id_fragment_movie_detail, new MovieDetailActivityFragment())
+                    .add( R.id.id_fragment_movie_detail, newFragment )
                     .commit();
         }
     }

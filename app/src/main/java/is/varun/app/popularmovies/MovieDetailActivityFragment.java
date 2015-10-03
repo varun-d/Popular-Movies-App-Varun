@@ -67,13 +67,11 @@ public class MovieDetailActivityFragment extends Fragment {
         Context mContext = rootView.getContext();
 
         // Receive the intent.
-        Intent intent = getActivity().getIntent();
+        Bundle args = getArguments();
 
-        // Create new TMDBMovie object to init with getSerializableExtra from the intent
-        if (intent.hasExtra(MoviePosterFragment.SER_KEY)){
-            theMovie = intent.getParcelableExtra(MoviePosterFragment.SER_KEY);
-        } else if ( getArguments() != null ){
-            theMovie = getArguments().getParcelable(MoviePosterFragment.SER_KEY);
+        // Create new TMDBMovie object to init with getParcelable from the args
+        if (args != null) {
+            theMovie = args.getParcelable(MoviePosterFragment.SER_KEY);
         } else {
             return null;
         }
