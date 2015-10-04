@@ -2,7 +2,8 @@
     <string name="app_name">Popular Movies</string>
     <string name="action_settings">Settings</string>
     <string name="action_imdb">IMDB Page</string>
-    <string name="api_key">bb2676cea1c31da46a38029b13b86eaf</string>
+    <!-- Please add the TMDB API KEY here. You can get one for free on: https://www.themoviedb.org/account/signup -->
+    <string name="api_key">add-your-own-key-here</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_movie_detail">Movie Details</string>
