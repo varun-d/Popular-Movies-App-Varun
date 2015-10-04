@@ -208,45 +208,17 @@ public class MoviePosterFragment extends Fragment {
          */
         protected TMDBMovie[] doInBackground(String... sParams) {
 
+            // Get API Key from resources strings.xml
+            String R_API_KEY = getResources().getString(R.string.api_key);
+
             // Declare the Retrofit service
             TMDBApiRetrofit TMDBservice;
 
-            // Declare recieved object here
+            // Declare received object here
             TMDBMovieListRetrofitObj movieReplyObject;
 
-            // Declrate and init an empty TMDBMovie object array
+            // Declare and init an empty TMDBMovie object array
             TMDBMovie[] myMovies = null;
-
-//            try {
-//                final String API_URL = "https://api.themoviedb.org";
-//
-//                TMDBservice = new RestAdapter.Builder()
-//                        .setEndpoint(API_URL)
-//                        .setLogLevel(RestAdapter.LogLevel.FULL)
-//                        .build()
-//                        .create(TMDBApiRetrofit.class);
-//
-//                movieReplyObject = TMDBservice.getMovies("bb2676cea1c31da46a38029b13b86eaf", "popularity.desc");
-//
-//                ArrayList<TMDBMovieListRetrofitObj.MovieResult> movieResults = movieReplyObject.results;
-//
-//                Log.d(LOG_TAG, Integer.toString(movieResults.size()));
-//
-//                myMovies = new TMDBMovie[movieResults.size()];
-//
-//                for (int i = 0; i < movieResults.size(); i++) {
-//
-//                    TMDBMovieListRetrofitObj.MovieResult res = movieResults.get(i);
-//
-//                    myMovies[i] = new TMDBMovie(res.id);
-//                    myMovies[i].setMovieTitle(res.original_title);
-//                    myMovies[i].setMovieOverview(res.overview);
-//                    myMovies[i].setMovieReleaseDate(res.release_date);
-//                    myMovies[i].setMovieVote(res.vote_average);
-//                    myMovies[i].setMoviePop(res.popularity);
-//                    myMovies[i].setMoviePosterURI(res.poster_path);
-//                    publishProgress(i);
-//                }
 
             // This try statement calls all data within the first loading screen itself... Should implement dialog loading here
             try {
@@ -258,7 +230,7 @@ public class MoviePosterFragment extends Fragment {
                         .build()
                         .create(TMDBApiRetrofit.class);
 
-                movieReplyObject = TMDBservice.getMovies("bb2676cea1c31da46a38029b13b86eaf", "popularity.desc");
+                movieReplyObject = TMDBservice.getMovies(R_API_KEY, "popularity.desc");
 
                 ArrayList<TMDBMovieListRetrofitObj.MovieResult> movieResults = movieReplyObject.results;
 
@@ -273,7 +245,7 @@ public class MoviePosterFragment extends Fragment {
 
                     TMDBMovieListRetrofitObj.MovieResult res = movieResults.get(i);
 
-                    TMDBMovieDetailsRetrofitObj dataMovieDetails = TMDBservice.getMovieDetails(res.id, "bb2676cea1c31da46a38029b13b86eaf", "reviews,trailers");
+                    TMDBMovieDetailsRetrofitObj dataMovieDetails = TMDBservice.getMovieDetails(res.id, R_API_KEY, "reviews,trailers");
 
                     // This shit is mental...
                     ArrayList<TMDBMovieDetailsRetrofitObj.Reviews.ReviewResults> movieReviews = dataMovieDetails.reviews.results;
